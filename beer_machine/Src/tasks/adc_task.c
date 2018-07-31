@@ -1,5 +1,7 @@
 #include "cmsis_os.h"
 #include "adc.h"
+#include "temperature_task.h"
+#include "pressure_task.h"
 #include "adc_task.h"
 #include "beer_machine.h"
 #include "log.h"
@@ -8,14 +10,12 @@
 
 osThreadId   adc_task_hdl;
 
-osMessageQId temperature_msg_q_hdl;
-osMessageQId pressure_msg_q_hdl;
-
 static uint16_t adc_sample[2];
 static uint32_t adc_cusum[2];
 static uint16_t adc_average[2];
 
-
+static temperature_msg_t t_msg;
+static pressure_msg_t    p_msg;
 
 
 void  HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc)
@@ -68,7 +68,7 @@ void adc_task(void const * argument)
   if(signals.status == osEventSignal ){
   if(signals.value.signals & ADC_TASK_ADC_COMPLETED_SIGNAL){
     
-/*temperature calculate*/    
+/*temperature adc calculate*/    
     if(t_sample_cnt < ADC_TASK_ADC_SAMPLE_MAX){
       if(adc_sample[ADC_TASK_TEMPERATURE_IDX] == ADC_TASK_ADC_VALUE_MIN ||\
          adc_sample[ADC_TASK_TEMPERATURE_IDX] == ADC_TASK_ADC_VALUE_MAX){
@@ -79,7 +79,9 @@ void adc_task(void const * argument)
     
          if(t_sample_err_cnt >= ADC_TASK_ADC_ERR_MAX){
          log_error("temperature  sample error.\r\n");
-         status = osMessagePut(temperature_msg_q_hdl,ADC_TASK_ADC_ERR_VALUE,0);
+         t_msg.type=T_ADC_COMPLETED;
+         t_msg.value=ADC_TASK_ADC_ERR_VALUE;         
+         status = osMessagePut(temperature_task_msg_q_id,(uint32_t)&t_msg,0);
          if(status !=osOK){
          log_error("put err temperature msg error:%d\r\n",status);
          }   
@@ -93,13 +95,15 @@ void adc_task(void const * argument)
      adc_average[ADC_TASK_TEMPERATURE_IDX]=adc_cusum[ADC_TASK_TEMPERATURE_IDX]/t_sample_cnt;  
      adc_cusum[ADC_TASK_TEMPERATURE_IDX]=0;
      t_sample_cnt=0;
-     status = osMessagePut(temperature_msg_q_hdl,adc_average[ADC_TASK_TEMPERATURE_IDX],0);
+     t_msg.type=T_ADC_COMPLETED;
+     t_msg.value=adc_average[ADC_TASK_TEMPERATURE_IDX];  
+     status = osMessagePut(temperature_task_msg_q_id,(uint32_t)&t_msg,0);
      if(status !=osOK){
       log_error("put temperature msg error:%d\r\n",status);
      }
     }
     
-   /*pressure calculate*/ 
+   /*pressure adc calculate*/ 
      if(p_sample_cnt < ADC_TASK_ADC_SAMPLE_MAX){
       if(adc_sample[ADC_TASK_PRESSURE_IDX] == ADC_TASK_ADC_VALUE_MIN ||\
          adc_sample[ADC_TASK_PRESSURE_IDX] == ADC_TASK_ADC_VALUE_MAX){
@@ -110,7 +114,9 @@ void adc_task(void const * argument)
          
          if(p_sample_err_cnt >= ADC_TASK_ADC_ERR_MAX){
          log_error("pressure  sample error.\r\n");
-         status = osMessagePut(pressure_msg_q_hdl,ADC_TASK_ADC_ERR_VALUE,0);
+         p_msg.type=P_ADC_COMPLETED;
+         p_msg.value=ADC_TASK_ADC_ERR_VALUE; 
+         status = osMessagePut(pressure_task_msg_q_id,(uint32_t)&p_msg,0);    
          if(status !=osOK){
          log_error("put err pressure msg error:%d\r\n",status);
          }   
@@ -124,8 +130,9 @@ void adc_task(void const * argument)
      adc_average[ADC_TASK_PRESSURE_IDX]=adc_cusum[ADC_TASK_PRESSURE_IDX]/p_sample_cnt;  
      adc_cusum[ADC_TASK_PRESSURE_IDX]=0;
      p_sample_cnt=0;
-     
-     status = osMessagePut(pressure_msg_q_hdl,adc_average[ADC_TASK_PRESSURE_IDX],0);
+     p_msg.type=P_ADC_COMPLETED;
+     p_msg.value=adc_average[ADC_TASK_PRESSURE_IDX];  
+     status = osMessagePut(pressure_task_msg_q_id,(uint32_t)&p_msg,0);
      if(status !=osOK){
      log_error("put error pressure msg error:%d\r\n",status);
       }    

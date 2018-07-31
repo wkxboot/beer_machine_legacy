@@ -26,7 +26,7 @@ void led_display_temperature_unit(uint8_t on_off);
 /*温度图标*/
 void led_display_temperature_icon(uint8_t on_off);
 /*温度数值*/
-void led_display_temperature(int8_t t);
+void led_display_temperature(int16_t t);
 /*压力单位*/
 void led_display_pressure_unit(uint8_t on_off);
 /*压力图标*/

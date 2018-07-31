@@ -8,6 +8,15 @@ void bsp_board_init(void)
  
 }
 
+/*压缩机控制*/
+void bsp_compressor_ctrl_on(void)
+{
+  HAL_GPIO_WritePin(COMPRESSOR_CTRL_GPIO_Port, COMPRESSOR_CTRL_Pin, BSP_CTRL_COMPRESSOR_ON); 
+}
+void bsp_compressor_ctrl_off(void)
+{
+  HAL_GPIO_WritePin(COMPRESSOR_CTRL_GPIO_Port, COMPRESSOR_CTRL_Pin, BSP_CTRL_COMPRESSOR_OFF); 
+}
 
 /*蜂鸣器控制*/
 void bsp_buzzer_ctrl_on(void)

@@ -1,0 +1,64 @@
+#ifndef  __PRESSURE_TASK_H__
+#define  __PRESSURE_TASK_H__
+#include "stdint.h"
+
+
+#ifdef  __cplusplus
+#define PRESSURE_TASK_BEGIN  extern "C" {
+#define PRESSURE_TASK_END    }
+#else
+#define PRESSURE_TASK_BEGIN  
+#define PRESSURE_TASK_END   
+#endif
+
+
+PRESSURE_TASK_BEGIN
+
+osThreadId   pressure_task_hdl;
+osMessageQId pressure_task_msg_q_id;
+
+
+typedef enum
+{
+P_ADC_COMPLETED=0,
+REQ_PRESSURE
+}pressure_msg_type_t;
+
+
+typedef struct
+{
+pressure_msg_type_t type;
+uint16_t            value;
+}pressure_msg_t;
+
+
+
+#define  PRESSURE_VALUE_IN_KG_CM2_MAX              99 /*最大显示压力。10倍 9.9kg/cm2*/
+#define  PRESSURE_VALUE_IN_KG_CM2_MIN              0  /*最小显示压力。10倍 0kg/cm2*/
+ 
+#define  PA_VALUE_PER_1KG_CM2                      98066.5 /*单位换算 1kg/cm2 == 98066.5Pa */
+
+
+#define  PRESSURE_SENSOR_REFERENCE_VOLTAGE         3.3 /*压力传感器参考电压电压 单位:V*/
+#define  PRESSURE_SENSOR_OUTPUT_VOLTAGE_MIN        0.5 /*压力传感器最小输出电压 单位:V*/
+#define  PRESSURE_SENSOR_OUTPUT_VOLTAGE_MAX        4.5 /*压力传感器最大输出电压 单位:V*/
+
+#define  PRESSURE_SENSOR_INPUT_PA_MIN             (5000.0)/*压力传感器最小输入压力 单位:Pa*/
+#define  PRESSURE_SENSOR_INPUT_PA_MAX             (10*1000000.0)/*压力传感器最大输入压力 单位:Pa*/
+
+
+
+#define  PRESSURE_TASK_P_HOLD_TIME                 8000/*压力显示保持时间 单位:ms*/
+#define  PRESSURE_SENSOR_ADC_VALUE_MAX             4095/*AD转换最大数值*/    
+
+
+
+#define  PRESSURE_TASK_MSG_WAIT_TIMEOUT            osWaitForever
+
+#define  PRESSURE_ERR_VALUE_OVER_HIGH              0xe4/*压力显示过载错误代码*/
+#define  PRESSURE_ERR_VALUE_OVER_LOW               0xe5/*压力显示低载错误代码*/
+#define  PRESSURE_ERR_VALUE_SENSOR                 0xe6/*压力显示AD传感器错误代码*/
+
+PRESSURE_TASK_END
+
+#endif

@@ -1092,6 +1092,12 @@
                     <name>$PROJ_DIR$\..\Src\tasks\adc_task.c</name>
                 </file>
                 <file>
+                    <name>$PROJ_DIR$\..\Src\tasks\compressor_task.c</name>
+                </file>
+                <file>
+                    <name>$PROJ_DIR$\..\Src\tasks\pressure_task.c</name>
+                </file>
+                <file>
                     <name>$PROJ_DIR$\..\Src\tasks\temperature_task.c</name>
                 </file>
             </group>

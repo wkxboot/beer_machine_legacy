@@ -13,6 +13,9 @@
 
 BEER_MACHINE_BEGIN
 
+#define  BSP_CTRL_COMPRESSOR_ON  GPIO_PIN_SET
+#define  BSP_CTRL_COMPRESSOR_OFF GPIO_PIN_RESET
+
 #define  BSP_CTRL_BUZZER_ON      GPIO_PIN_SET
 #define  BSP_CTRL_BUZZER_OFF     GPIO_PIN_RESET
 
@@ -22,8 +25,9 @@ BEER_MACHINE_BEGIN
 #define  BSP_TM1629A_CS_SET      GPIO_PIN_SET
 #define  BSP_TM1629A_CS_CLR      GPIO_PIN_RESET
 
-
-
+/*压缩机控制*/
+void bsp_compressor_ctrl_on(void);
+void bsp_compressor_ctrl_off(void);
 /*蜂鸣器控制*/
 void bsp_buzzer_ctrl_on(void);
 void bsp_buzzer_ctrl_off(void);

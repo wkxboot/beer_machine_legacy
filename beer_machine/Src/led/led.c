@@ -168,7 +168,7 @@ void led_display_temperature_icon(uint8_t on_off)
 }
 
 /*温度数值*/
-void led_display_temperature(int8_t t)
+void led_display_temperature(int16_t t)
 {
 uint8_t dis[2];
 if(t < 0){
