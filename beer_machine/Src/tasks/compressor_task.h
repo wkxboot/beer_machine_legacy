@@ -16,7 +16,7 @@ COMPRESSOR_TASK_BEGIN
 
 typedef enum
 {
-TEMPERATURE_VALUE=0
+C_TEMPERATURE_VALUE=0
 }compressor_msg_type_t;
 
 
@@ -30,7 +30,8 @@ int16_t               value;
 
 extern osThreadId   compressor_task_hdl;
 extern osMessageQId compressor_task_msg_q_id;
-extern osTimerId    compressor_timer_id;
+void compressor_task(void const *argument);
+
 
 
 #define  COMPRESSOR_WORK_TEMPERATURE           5 /*开压缩机温度单位:摄氏度*/

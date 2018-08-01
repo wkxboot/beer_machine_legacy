@@ -8,6 +8,28 @@ void bsp_board_init(void)
  
 }
 
+/*按键*/
+__weak void bsp_alarm_sw_it_callback()
+{
+  
+}
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
+{
+  bsp_alarm_sw_it_callback();
+}
+
+uint8_t bsp_is_alarm_sw_press()
+{
+ GPIO_PinState status;
+ status =HAL_GPIO_ReadPin(ALARM_CLEAR_SW_GPIO_Port,ALARM_CLEAR_SW_Pin);
+ if(status == BSP_SW_STATUS_PRESS){
+   return 1;
+ }
+ 
+ return 0;
+}
+
+
 /*压缩机控制*/
 void bsp_compressor_ctrl_on(void)
 {

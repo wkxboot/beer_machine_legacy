@@ -72,7 +72,7 @@ extern void _Error_Handler(char *, int);
 void MX_IWDG_Init(void);
 
 /* USER CODE BEGIN Prototypes */
-
+void sys_feed_dog(void);
 /* USER CODE END Prototypes */
 
 #ifdef __cplusplus

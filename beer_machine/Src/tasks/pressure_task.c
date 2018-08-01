@@ -1,12 +1,20 @@
 #include "cmsis_os.h"
+#include "tasks_init.h"
 #include "adc_task.h"
+#include "alarm_task.h"
 #include "pressure_task.h"
+#include "display_task.h"
 #include "log.h"
 #define  LOG_MODULE_LEVEL    LOG_LEVEL_DEBUG
 #define  LOG_MODULE_NAME     "[p_task]"
 
 osThreadId   pressure_task_hdl;
 osMessageQId pressure_task_msg_q_id;
+
+static pressure_msg_t *ptr_msg;
+static display_msg_t   d_msg;
+static alarm_msg_t     a_msg;
+
 
 typedef enum
 {
@@ -18,6 +26,7 @@ P_DIR_DOWN=1
 typedef struct
 {
 uint8_t           value;
+uint8_t           changed;
 pressure_dir_t    dir;
 uint32_t          time;
 }pressure_t;
@@ -43,7 +52,7 @@ static uint8_t get_pressure(uint16_t adc)
  p=(v-PRESSURE_SENSOR_OUTPUT_VOLTAGE_MIN)*(PRESSURE_SENSOR_INPUT_PA_MAX -PRESSURE_SENSOR_INPUT_PA_MIN)/(PRESSURE_SENSOR_OUTPUT_VOLTAGE_MAX - PRESSURE_SENSOR_OUTPUT_VOLTAGE_MIN)+PRESSURE_SENSOR_INPUT_PA_MIN;
  p=(p*10)/PA_VALUE_PER_1KG_CM2;
 
- log_debug("p:%d kg/cm2.\r\n",(uint8_t)p);
+ log_debug("p:%d kg/cm2.\r\n",(uint32_t)p);
  if(p < 0 ){
  log_error("pressure over low.\r\n");
  return  PRESSURE_ERR_VALUE_OVER_LOW;
@@ -52,43 +61,65 @@ static uint8_t get_pressure(uint16_t adc)
  return  PRESSURE_ERR_VALUE_OVER_HIGH;
  }
  
- return (uint8_t)p;
+ return (uint8_t)((uint32_t)p);
 }
 
 void pressure_task(void const *argument)
 {
-  uint8_t temp;
-  uint16_t p_adc;
+  uint8_t p;
+  uint16_t adc;
   uint32_t cur_time;
-  osEvent msg;
+  osEvent os_msg;
   
-  osMessageQDef(pressure_msg_q,2,uint16_t);
+  osMessageQDef(pressure_msg_q,4,uint32_t);
   pressure_task_msg_q_id = osMessageCreate(osMessageQ(pressure_msg_q),pressure_task_hdl);
   log_assert(pressure_task_msg_q_id);
   
+  /*等待任务同步*/
+  xEventGroupSync(tasks_sync_evt_group_hdl,TASKS_SYNC_EVENT_PRESSURE_TASK_RDY,TASKS_SYNC_EVENT_ALL_TASKS_RDY,osWaitForever);
+  log_debug("pressure task sync ok.\r\n");
+  
   while(1){
-  msg = osMessageGet(pressure_task_msg_q_id,PRESSURE_TASK_MSG_WAIT_TIMEOUT);
-  if(msg.status == osEventMessage){
+  os_msg = osMessageGet(pressure_task_msg_q_id,PRESSURE_TASK_MSG_WAIT_TIMEOUT);
+  if(os_msg.status == osEventMessage){
+
    cur_time = osKernelSysTick(); 
-   p_adc = (uint16_t)msg.value.v;
-   temp = get_pressure(p_adc);
-   
-   if(temp == PRESSURE_ERR_VALUE_SENSOR    ||\
-      temp == PRESSURE_ERR_VALUE_OVER_HIGH ||\
-      temp == PRESSURE_ERR_VALUE_OVER_LOW ){
+   ptr_msg=(pressure_msg_t*)os_msg.value.v;
+   if(ptr_msg->type == P_ADC_COMPLETED){
+   adc = ptr_msg->value;
+   p = get_pressure(adc);  
+   if(p == PRESSURE_ERR_VALUE_SENSOR    ||\
+      p == PRESSURE_ERR_VALUE_OVER_HIGH ||\
+      p == PRESSURE_ERR_VALUE_OVER_LOW ){
     pressure.dir=P_DIR_INIT;
-    pressure.value=temp;
+    pressure.value=p;
     pressure.time=0;
+    pressure.changed=1;
     log_error("pressure err.code:%d.\r\n",pressure.value);
-    }else if(temp > pressure.value && pressure.dir == P_DIR_UP    ||\
-             temp < pressure.value && pressure.dir == P_DIR_DOWN  ||\
+    }else if(p > pressure.value && pressure.dir == P_DIR_UP    ||\
+             p < pressure.value && pressure.dir == P_DIR_DOWN  ||\
              pressure.dir == P_DIR_INIT                           ||\
              cur_time - pressure.time >= PRESSURE_TASK_P_HOLD_TIME ){         
-   pressure.dir = temp > pressure.value?P_DIR_UP:P_DIR_DOWN;
-   pressure.value = (int16_t)temp;
+   pressure.dir = p > pressure.value?P_DIR_UP:P_DIR_DOWN;
+   pressure.value = p;
    pressure.time =cur_time; 
-   log_debug("p changed:%d ℃.\r\n",pressure.value);
+   pressure.changed=1;
+   log_debug("p changed:%d kg/cm2.\r\n",pressure.value);
    }
+   
+   if(pressure.changed){
+   pressure.changed=0;
+   d_msg.type = DIS_PRESSURE_VALUE;
+   d_msg.value =  pressure.value;
+   osMessagePut(display_task_msg_q_id,(uint32_t)&d_msg,0);  
+   
+   a_msg.type = ALARM_PRESSURE_VALUE;
+   a_msg.value =  pressure.value;
+   osMessagePut(alarm_task_msg_q_id,(uint32_t)&a_msg,0);  
+   }
+   
+  }
+  
   }
  }
 }

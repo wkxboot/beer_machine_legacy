@@ -1,4 +1,5 @@
 #include "cmsis_os.h"
+#include "tasks_init.h"
 #include "compressor_task.h"
 #include "temperature_task.h"
 #include "beer_machine.h"
@@ -11,6 +12,7 @@ osMessageQId compressor_task_msg_q_id;
 osTimerId    compressor_timer_id;
 
 static temperature_msg_t msg;
+static compressor_msg_t  *ptr_msg;
 
 typedef enum
 {
@@ -23,6 +25,10 @@ COMPRESSOR_STATUS_WAIT   /*两次开机之间的状态*/
 static compressor_status_t compressor_status = COMPRESSOR_STATUS_RDY;
 
 static void compressor_timer_expired(void const * argument);
+static void compressor_pwr_turn_on();
+static void compressor_pwr_turn_off();
+
+
 
 static void compressor_timer_init()
 {
@@ -61,13 +67,14 @@ static void compressor_timer_expired(void const * argument)
 {
   osStatus status;
  if(compressor_status == COMPRESSOR_STATUS_WORK){
+    compressor_pwr_turn_off();
     compressor_timer_start_rest_timer();
-    log_debug("压缩机到达最长工作时间.\r\n");
+    log_debug("压缩机到达最长工作时间.关压缩机\r\n");
  }else{
     compressor_status = COMPRESSOR_STATUS_RDY;
    /*需要请求当前温度值，以判断是否需要控制压缩机*/
    log_debug("压缩机定时器到达.请求温度.\r\n");
-   msg.type=REQ_TEMPERATURE; 
+   msg.type=T_REQ_TEMPERATURE; 
    status = osMessagePut(temperature_task_msg_q_id,(uint32_t)&msg,0);
    if(status !=osOK){
    log_error("put temperature msg error:%d\r\n",status);
@@ -87,20 +94,27 @@ static void compressor_pwr_turn_off()
 void compressor_task(void const *argument)
 {
   int16_t t;
-  osEvent msg;
+  osEvent os_msg;
   
   compressor_timer_init();
-  osMessageQDef(compressor_msg_q,2,uint16_t);
+  osMessageQDef(compressor_msg_q,4,uint32_t);
   compressor_task_msg_q_id = osMessageCreate(osMessageQ(compressor_msg_q),compressor_task_hdl);
   log_assert(compressor_task_msg_q_id);
   /*开机先关闭压缩机*/
   compressor_pwr_turn_off();
+  /*等待任务同步*/
+  xEventGroupSync(tasks_sync_evt_group_hdl,TASKS_SYNC_EVENT_COMPRESSOR_TASK_RDY,TASKS_SYNC_EVENT_ALL_TASKS_RDY,osWaitForever);
+  log_debug("compressor task sync ok.\r\n");
+  
   osDelay(COMPRESSOT_TASK_WAIT_RDY_TIMEOUT);
   
   while(1){
-  msg = osMessageGet(compressor_task_msg_q_id,COMPRESSOR_TASK_MSG_WAIT_TIMEOUT);
-  if(msg.status == osEventMessage){
-  t = msg.value.v;
+  os_msg = osMessageGet(compressor_task_msg_q_id,COMPRESSOR_TASK_MSG_WAIT_TIMEOUT);
+  if(os_msg.status == osEventMessage){  
+   ptr_msg =(compressor_msg_t*)os_msg.value.v;
+   
+  if(ptr_msg->type == C_TEMPERATURE_VALUE){ 
+  t=ptr_msg->value;   
   if(t == TEMPERATURE_ERR_VALUE_SENSOR    ||\
      t == TEMPERATURE_ERR_VALUE_OVER_HIGH ||\
      t == TEMPERATURE_ERR_VALUE_OVER_LOW ){
@@ -120,7 +134,8 @@ void compressor_task(void const *argument)
      log_debug("温度低于关机温度.关压缩机.\r\n");
     }
   } 
-  
+ }
+ 
   }
   }
 }

@@ -1,7 +1,9 @@
 #include "cmsis_os.h"
+#include "tasks_init.h"
 #include "adc_task.h"
 #include "compressor_task.h"
 #include "temperature_task.h"
+#include "display_task.h"
 #include "log.h"
 #define  LOG_MODULE_LEVEL    LOG_LEVEL_DEBUG
 #define  LOG_MODULE_NAME     "[t_task]"
@@ -9,8 +11,9 @@
 osThreadId   temperature_task_hdl;
 osMessageQId temperature_task_msg_q_id;
 
-static compressor_msg_t c_msg;
-
+static temperature_msg_t *ptr_msg;
+static compressor_msg_t  c_msg;
+static display_msg_t     d_msg;
 
 
 static int16_t const t_r_map[][2]={
@@ -119,25 +122,28 @@ int16_t get_t(uint16_t adc)
 
 void temperature_task(void const *argument)
 {
-  temperature_msg_t *t_msg;
   uint16_t bypass_r_adc;
   uint32_t cur_time;
   int16_t  temp;
-  osEvent  msg;
+  osEvent  os_msg;
   
-  osMessageQDef(temperature_msg_q,2,uint16_t);
+  osMessageQDef(temperature_msg_q,4,uint32_t);
   temperature_task_msg_q_id = osMessageCreate(osMessageQ(temperature_msg_q),temperature_task_hdl);
   log_assert(temperature_task_msg_q_id);
   
+  /*等待任务同步*/
+  xEventGroupSync(tasks_sync_evt_group_hdl,TASKS_SYNC_EVENT_TEMPERATURE_TASK_RDY,TASKS_SYNC_EVENT_ALL_TASKS_RDY,osWaitForever);
+  log_debug("temperature task sync ok.\r\n");
+  
   while(1){
-  msg = osMessageGet(temperature_task_msg_q_id,TEMPERATURE_TASK_MSG_WAIT_TIMEOUT);
-  if(msg.status == osEventMessage){
-  t_msg = (temperature_msg_t *)msg.value.v;
+  os_msg = osMessageGet(temperature_task_msg_q_id,TEMPERATURE_TASK_MSG_WAIT_TIMEOUT);
+  if(os_msg.status == osEventMessage){
+  ptr_msg = (temperature_msg_t *)os_msg.value.v;
   
   /*温度ADC转换完成消息*/
-  if(t_msg->type == T_ADC_COMPLETED){
+  if(ptr_msg->type == T_ADC_COMPLETED){
    cur_time = osKernelSysTick(); 
-   bypass_r_adc = t_msg->value;
+   bypass_r_adc = ptr_msg->value;
    temp =get_t(bypass_r_adc);
    
    if(temp == TEMPERATURE_ERR_VALUE_SENSOR    ||\
@@ -156,20 +162,24 @@ void temperature_task(void const *argument)
    temperature.value = (int16_t)temp;
    temperature.time =cur_time; 
    temperature.changed=1;
-   log_debug("t ok:%d ℃.\r\n",temperature.value);
+   log_debug("t ok:%d C.\r\n",temperature.value);
    }
    
    if(temperature.changed){
-   log_debug("t changed:%d ℃.\r\n",temperature.value);
+   log_debug("t changed:%d C.\r\n",temperature.value);
    temperature.changed=0;
-   c_msg.type = TEMPERATURE_VALUE;
+   c_msg.type = C_TEMPERATURE_VALUE;
    c_msg.value= temperature.value;
    osMessagePut(compressor_task_msg_q_id,(uint32_t)&c_msg,0);
+   
+   d_msg.type = DIS_TEMPERATURE_VALUE;
+   d_msg.value =  temperature.value;
+   osMessagePut(display_task_msg_q_id,(uint32_t)&d_msg,0);
    }
   }
   /*请求温度消息*/
-  if(t_msg->type == REQ_TEMPERATURE){
-   c_msg.type = TEMPERATURE_VALUE;
+  if(ptr_msg->type == T_REQ_TEMPERATURE){
+   c_msg.type = C_TEMPERATURE_VALUE;
    c_msg.value= temperature.value;
    osMessagePut(compressor_task_msg_q_id,(uint32_t)&c_msg,0); 
   }

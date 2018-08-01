@@ -354,6 +354,8 @@
                     <state>$PROJ_DIR$/../Src/board</state>
                     <state>$PROJ_DIR$/../Src/led</state>
                     <state>$PROJ_DIR$/../Src/tm1629a</state>
+                    <state>$PROJ_DIR$/../Src/tasks</state>
+                    <state>$PROJ_DIR$/../Src/serial</state>
                     <state>$PROJ_DIR$/../Src/debug/log</state>
                     <state>$PROJ_DIR$/../Src/debug/log/SEGGER_RTT_V612j/RTT</state>
                     <state>$PROJ_DIR$/../Src/debug/log/SEGGER_RTT_V612j/Syscalls</state>
@@ -1069,6 +1071,12 @@
                             <name>$PROJ_DIR$\..\Src\debug\log\SEGGER_RTT_V612j\Syscalls\SEGGER_RTT_Syscalls_IAR.c</name>
                         </file>
                     </group>
+                    <group>
+                        <name>st_serial</name>
+                        <file>
+                            <name>$PROJ_DIR$\..\Src\debug\log\st_serial\st_serial.c</name>
+                        </file>
+                    </group>
                     <file>
                         <name>$PROJ_DIR$\..\Src\debug\log\log.c</name>
                     </file>
@@ -1092,10 +1100,19 @@
                     <name>$PROJ_DIR$\..\Src\tasks\adc_task.c</name>
                 </file>
                 <file>
+                    <name>$PROJ_DIR$\..\Src\tasks\alarm_task.c</name>
+                </file>
+                <file>
                     <name>$PROJ_DIR$\..\Src\tasks\compressor_task.c</name>
                 </file>
                 <file>
+                    <name>$PROJ_DIR$\..\Src\tasks\display_task.c</name>
+                </file>
+                <file>
                     <name>$PROJ_DIR$\..\Src\tasks\pressure_task.c</name>
+                </file>
+                <file>
+                    <name>$PROJ_DIR$\..\Src\tasks\tasks_init.c</name>
                 </file>
                 <file>
                     <name>$PROJ_DIR$\..\Src\tasks\temperature_task.c</name>

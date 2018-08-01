@@ -71,6 +71,15 @@ void MX_IWDG_Init(void)
 }
 
 /* USER CODE BEGIN 1 */
+void sys_feed_dog(void)
+{
+  HAL_StatusTypeDef status;
+  status= HAL_IWDG_Refresh(&hiwdg);
+  if(status!=  HAL_OK){
+  _Error_Handler(__FILE__, __LINE__);
+  }
+}
+
 
 /* USER CODE END 1 */
 

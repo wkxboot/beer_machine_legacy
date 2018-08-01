@@ -51,8 +51,18 @@
 #include "task.h"
 #include "cmsis_os.h"
 
-/* USER CODE BEGIN Includes */     
-
+/* USER CODE BEGIN Includes */ 
+#include "iwdg.h"
+#include "tasks_init.h"
+#include "adc_task.h"
+#include "alarm_task.h"
+#include "compressor_task.h"
+#include "display_task.h"
+#include "temperature_task.h"
+#include "pressure_task.h"
+#include "log.h"
+#define  LOG_MODULE_LEVEL    LOG_LEVEL_DEBUG
+#define  LOG_MODULE_NAME     "[main]"
 /* USER CODE END Includes */
 
 /* Variables -----------------------------------------------------------------*/
@@ -149,7 +159,8 @@ __weak void PostSleepProcessing(uint32_t *ulExpectedIdleTime)
 
 void MX_FREERTOS_Init(void) {
   /* USER CODE BEGIN Init */
-       
+    log_init();
+    tasks_init();    
   /* USER CODE END Init */
 
   /* USER CODE BEGIN RTOS_MUTEX */
@@ -166,11 +177,33 @@ void MX_FREERTOS_Init(void) {
 
   /* Create the thread(s) */
   /* definition and creation of defaultTask */
-  osThreadDef(defaultTask, StartDefaultTask, osPriorityNormal, 0, 128);
-  defaultTaskHandle = osThreadCreate(osThread(defaultTask), NULL);
+  osThreadDef(StartDefaultTask,StartDefaultTask, osPriorityNormal, 0, 128);
+  defaultTaskHandle = osThreadCreate(osThread(StartDefaultTask), NULL);
 
   /* USER CODE BEGIN RTOS_THREADS */
-  /* add threads, ... */
+  
+  osThreadDef(adc_task,adc_task, osPriorityNormal, 0, 128);
+  adc_task_hdl = osThreadCreate(osThread(adc_task), NULL);
+    /* temperature_task */
+  osThreadDef(temperature_task, temperature_task, osPriorityNormal, 0, 128);
+  temperature_task_hdl = osThreadCreate(osThread(temperature_task), NULL);
+  
+    /* pressure_task */
+  osThreadDef(pressure_task, pressure_task, osPriorityNormal, 0, 128);
+  pressure_task_hdl = osThreadCreate(osThread(pressure_task), NULL);
+  
+    /* compressor_task */
+  osThreadDef(compressor_task, compressor_task, osPriorityNormal, 0, 128);
+  compressor_task_hdl = osThreadCreate(osThread(compressor_task), NULL);
+  
+    /* alarm_task */
+  osThreadDef(alarm_task, alarm_task, osPriorityNormal, 0, 128);
+  alarm_task_hdl = osThreadCreate(osThread(alarm_task), NULL);
+  
+    /* display_task */
+  osThreadDef(display_task, display_task, osPriorityNormal, 0, 128);
+  display_task_hdl = osThreadCreate(osThread(display_task), NULL);
+  
   /* USER CODE END RTOS_THREADS */
 
   /* USER CODE BEGIN RTOS_QUEUES */
@@ -188,7 +221,8 @@ void StartDefaultTask(void const * argument)
   /* Infinite loop */
   for(;;)
   {
-    osDelay(1);
+    osDelay(200);
+    sys_feed_dog();
   }
   /* USER CODE END StartDefaultTask */
 }

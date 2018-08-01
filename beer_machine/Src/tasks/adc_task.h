@@ -15,6 +15,7 @@ ADC_TASK_BEGIN
 
 
 extern osThreadId   adc_task_hdl;
+void adc_task(void const * argument);
 
 
 #define  ADC_TASK_ADC_VALUE_MAX                (4095)

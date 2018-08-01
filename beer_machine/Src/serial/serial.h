@@ -15,7 +15,7 @@
 
 SERIAL_BEGIN
 
-#define  SERIAL_CNT             2
+#define  SERIAL_CNT             1
 #define  BUFFER_SIZE_MAX        512
 
 typedef struct 

@@ -1,9 +1,11 @@
 #include "cmsis_os.h"
 #include "adc.h"
+#include "tasks_init.h"
+#include "adc_task.h"
 #include "temperature_task.h"
 #include "pressure_task.h"
-#include "adc_task.h"
 #include "beer_machine.h"
+
 #include "log.h"
 #define  LOG_MODULE_LEVEL    LOG_LEVEL_DEBUG
 #define  LOG_MODULE_NAME     "[adc_task]"
@@ -55,7 +57,9 @@ void adc_task(void const * argument)
   uint8_t t_sample_err_cnt=0,p_sample_err_cnt=0;
   uint8_t t_sample_cnt=0    ,p_sample_cnt=0;
   int  result;
-
+  /*等待任务同步*/
+  xEventGroupSync(tasks_sync_evt_group_hdl,TASKS_SYNC_EVENT_ADC_TASK_RDY,TASKS_SYNC_EVENT_ALL_TASKS_RDY,osWaitForever);
+  log_debug("adc task sync ok.\r\n");
   while(1){
   osDelay(ADC_TASK_INTERVAL);
   result = adc_start();

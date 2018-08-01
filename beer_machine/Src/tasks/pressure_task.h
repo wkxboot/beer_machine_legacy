@@ -14,14 +14,15 @@
 
 PRESSURE_TASK_BEGIN
 
-osThreadId   pressure_task_hdl;
-osMessageQId pressure_task_msg_q_id;
+extern osThreadId   pressure_task_hdl;
+extern osMessageQId pressure_task_msg_q_id;
+void pressure_task(void const *argument);
 
 
 typedef enum
 {
 P_ADC_COMPLETED=0,
-REQ_PRESSURE
+P_REQ_PRESSURE
 }pressure_msg_type_t;
 
 

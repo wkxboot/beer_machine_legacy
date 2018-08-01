@@ -13,6 +13,9 @@
 
 BEER_MACHINE_BEGIN
 
+#define  BSP_SW_STATUS_PRESS     GPIO_PIN_RESET
+#define  BSP_SW_STATUS_RELEASE   GPIO_PIN_SET
+
 #define  BSP_CTRL_COMPRESSOR_ON  GPIO_PIN_SET
 #define  BSP_CTRL_COMPRESSOR_OFF GPIO_PIN_RESET
 
@@ -24,6 +27,9 @@ BEER_MACHINE_BEGIN
 
 #define  BSP_TM1629A_CS_SET      GPIO_PIN_SET
 #define  BSP_TM1629A_CS_CLR      GPIO_PIN_RESET
+
+/*外部清除压力按键*/
+uint8_t bsp_is_alarm_sw_press();
 
 /*压缩机控制*/
 void bsp_compressor_ctrl_on(void);

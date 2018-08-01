@@ -16,12 +16,13 @@ TEMPERATURE_TASK_BEGIN
 
 extern osThreadId   temperature_task_hdl;
 extern osMessageQId temperature_task_msg_q_id;
+void temperature_task(void const *argument);
 
 
 typedef enum
 {
 T_ADC_COMPLETED=0,
-REQ_TEMPERATURE
+T_REQ_TEMPERATURE
 }temperature_msg_type_t;
 
 
