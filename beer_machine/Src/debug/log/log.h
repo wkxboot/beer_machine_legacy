@@ -138,6 +138,13 @@ SERIAL_LOG_OUT(format,##arg);         \
       LOG_OUT(LOG_DEBUG_PREFIX"line:%d\r\n"format,LOG_TIME_VALUE,__LINE__,##arg);         \
     }
 
+#define log_one_line(format,arg...)                                                       \
+    if ((LOG_MODULE_LEVEL >= LOG_LEVEL_DEBUG) &&                                          \
+        (LOG_LEVEL_DEBUG <= LOG_GLOBAL_LEVEL))                                            \
+    {                                                                                     \
+     LOG_OUT("\r\033[k"LOG_DEBUG_PREFIX"line:%d.  "format,LOG_TIME_VALUE,__LINE__,##arg); \
+    }
+    
 
 #define log_assert(expr)                                                  \
 {                                                                         \

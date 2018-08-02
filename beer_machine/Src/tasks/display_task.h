@@ -14,23 +14,6 @@
 
 DISPLAY_TASK_BEGIN
 
-typedef enum
-{
-DIS_TEMPERATURE_VALUE=0,
-DIS_PRESSURE_VALUE,
-DIS_CAPACITY_VALUE,
-DIS_WIFI_STATUS,
-DIS_COMM_4G_STATUS
-}display_msg_type_t;
-
-
-typedef struct
-{
-display_msg_type_t  type;
-uint16_t            value;
-}display_msg_t;
-
-
 extern osThreadId   display_task_hdl;
 extern osMessageQId display_task_msg_q_id;
 void display_task(void const *argument);

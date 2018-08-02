@@ -25,6 +25,65 @@ void tasks_init();
 #define  TASKS_SYNC_EVENT_ALL_TASKS_RDY             ((1<<6)-1)
 
 
+typedef enum
+{
+T_ADC_COMPLETED=0,
+P_ADC_COMPLETED,
+REQ_PRESSURE_VALUE,
+REQ_TEMPERATURE_VALUE,
+REQ_CAPACITY_VALUE,
+REQ_COMM_WIFI_STATUS,
+REQ_COMM_4G_STATUS,
+RESPONSE_TEMPERATURE_VALUE,
+RESPONSE_PRESSURE_VALUE,
+RESPONSE_CAPACITY_VALUE,
+RESPONSE_COMM_WIFI_STATUS,
+RESPONSE_COMM_4G_STATUS,
+BROADCAST_TEMPERATURE_VALUE,
+BROADCAST_PRESSURE_VALUE,
+BROADCAST_CAPACITY_VALUE,
+BROADCAST_COMM_WIFI_STATUS,
+BROADCAST_COMM_4G_STATUS,
+ALARM_SW_SHORT_PRESS,
+ALARM_SW_LONG_PRESS
+}task_msg_type_t;
+
+
+typedef struct
+{
+task_msg_type_t type;
+union
+{
+uint8_t        pressure;
+uint8_t        capacity;
+uint8_t        comm_wifi;
+uint8_t        comm_4g;
+int16_t        temperature;
+uint16_t       adc;
+uint32_t       reserved;
+};
+osMessageQId   req_q_id;
+}task_msg_t;
+
+
+
+#ifndef  NULL
+#define  NULL          (void*)0
+#endif
+
+
+#ifndef  TRUE       
+#define  TRUE         1
+#endif
+
+#ifndef  FALSE       
+#define  FALSE        0
+#endif
+
+
+
+
+
 
 
 

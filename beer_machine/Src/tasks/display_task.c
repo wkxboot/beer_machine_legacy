@@ -12,7 +12,7 @@
 osThreadId   display_task_hdl;
 osMessageQId display_task_msg_q_id;
 
-display_msg_t *ptr_msg;
+task_msg_t *ptr_msg;
 
 
 
@@ -37,19 +37,19 @@ void display_task(void const *argument)
   while(1){
   os_msg = osMessageGet(display_task_msg_q_id,DISPLAY_TASK_MSG_WAIT_TIMEOUT);
   if(os_msg.status == osEventMessage){
-   ptr_msg = (display_msg_t *)os_msg.value.v;
-   if(ptr_msg->type == DIS_TEMPERATURE_VALUE){
-    temperature = (int16_t)ptr_msg->value;
+   ptr_msg = (task_msg_t *)os_msg.value.v;
+   if(ptr_msg->type == BROADCAST_TEMPERATURE_VALUE){
+    temperature =ptr_msg->temperature;
     led_display_temperature(temperature);
    }
    
-   if(ptr_msg->type == DIS_PRESSURE_VALUE){
-     pressure = ptr_msg->value;
+   if(ptr_msg->type == BROADCAST_PRESSURE_VALUE){
+     pressure = ptr_msg->pressure;
      led_display_pressure(pressure);
    }
    
-   if(ptr_msg->type == DIS_CAPACITY_VALUE){
-     capacity = ptr_msg->value;
+   if(ptr_msg->type == BROADCAST_CAPACITY_VALUE){
+     capacity = ptr_msg->capacity;
      led_display_pressure(capacity);
    }
    

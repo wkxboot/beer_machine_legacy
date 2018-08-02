@@ -11,16 +11,16 @@
 osThreadId   pressure_task_hdl;
 osMessageQId pressure_task_msg_q_id;
 
-static pressure_msg_t *ptr_msg;
-static display_msg_t   d_msg;
-static alarm_msg_t     a_msg;
-
+static task_msg_t   *ptr_msg;
+static task_msg_t   d_msg;
+static task_msg_t   a_msg;
+static task_msg_t   response_msg;
 
 typedef enum
 {
 P_DIR_INIT=0,
 P_DIR_UP,
-P_DIR_DOWN=1
+P_DIR_DOWN
 }pressure_dir_t;
 
 typedef struct
@@ -46,13 +46,11 @@ static uint8_t get_pressure(uint16_t adc)
  if(adc == ADC_TASK_ADC_ERR_VALUE){
    return PRESSURE_ERR_VALUE_SENSOR;
  }
- v= (adc*PRESSURE_SENSOR_REFERENCE_VOLTAGE)/PRESSURE_SENSOR_ADC_VALUE_MAX;
- log_debug("v:%d mv.\r\n",(uint16_t)(v*1000));
-     
+ v= (adc*PRESSURE_SENSOR_REFERENCE_VOLTAGE)/PRESSURE_SENSOR_ADC_VALUE_MAX;   
  p=(v-PRESSURE_SENSOR_OUTPUT_VOLTAGE_MIN)*(PRESSURE_SENSOR_INPUT_PA_MAX -PRESSURE_SENSOR_INPUT_PA_MIN)/(PRESSURE_SENSOR_OUTPUT_VOLTAGE_MAX - PRESSURE_SENSOR_OUTPUT_VOLTAGE_MIN)+PRESSURE_SENSOR_INPUT_PA_MIN;
  p=(p*10)/PA_VALUE_PER_1KG_CM2;
 
- log_debug("p:%d kg/cm2.\r\n",(uint32_t)p);
+ log_one_line("v:%d mv   p:%d kg/cm2.",(uint16_t)(v*1000),(uint32_t)p);
  if(p < 0 ){
  log_error("pressure over low.\r\n");
  return  PRESSURE_ERR_VALUE_OVER_LOW;
@@ -69,6 +67,7 @@ void pressure_task(void const *argument)
   uint8_t p;
   uint16_t adc;
   uint32_t cur_time;
+  uint32_t delt_time;
   osEvent os_msg;
   
   osMessageQDef(pressure_msg_q,4,uint32_t);
@@ -83,42 +82,53 @@ void pressure_task(void const *argument)
   os_msg = osMessageGet(pressure_task_msg_q_id,PRESSURE_TASK_MSG_WAIT_TIMEOUT);
   if(os_msg.status == osEventMessage){
 
+   ptr_msg=(task_msg_t*)os_msg.value.v;
    cur_time = osKernelSysTick(); 
-   ptr_msg=(pressure_msg_t*)os_msg.value.v;
+   delt_time = cur_time-pressure.time;
+   
+   /*压力ADC完成消息处理*/
    if(ptr_msg->type == P_ADC_COMPLETED){
-   adc = ptr_msg->value;
-   p = get_pressure(adc);  
+   adc = ptr_msg->adc;
+   p = get_pressure(adc); 
+   /*压力值有变化*/
+   if(p !=pressure.value){
    if(p == PRESSURE_ERR_VALUE_SENSOR    ||\
       p == PRESSURE_ERR_VALUE_OVER_HIGH ||\
       p == PRESSURE_ERR_VALUE_OVER_LOW ){
     pressure.dir=P_DIR_INIT;
     pressure.value=p;
-    pressure.time=0;
-    pressure.changed=1;
-    log_error("pressure err.code:%d.\r\n",pressure.value);
+    pressure.changed=TRUE;
+    log_error("pressure err.code:0x%2x.\r\n",pressure.value);
     }else if(p > pressure.value && pressure.dir == P_DIR_UP    ||\
              p < pressure.value && pressure.dir == P_DIR_DOWN  ||\
-             pressure.dir == P_DIR_INIT                           ||\
-             cur_time - pressure.time >= PRESSURE_TASK_P_HOLD_TIME ){         
+             pressure.dir == P_DIR_INIT                        ||\
+             delt_time >= PRESSURE_TASK_P_HOLD_TIME ){      
    pressure.dir = p > pressure.value?P_DIR_UP:P_DIR_DOWN;
    pressure.value = p;
    pressure.time =cur_time; 
-   pressure.changed=1;
-   log_debug("p changed:%d kg/cm2.\r\n",pressure.value);
+   pressure.changed=TRUE;
    }
-   
-   if(pressure.changed){
-   pressure.changed=0;
-   d_msg.type = DIS_PRESSURE_VALUE;
-   d_msg.value =  pressure.value;
+   }
+   if(pressure.changed == TRUE){
+   log_debug("pressure changed. dir :%d  value:%d kg/cm2  delt_time:%d ms.\r\n" ,pressure.dir,p,delt_time);  
+   pressure.changed=FALSE;
+   d_msg.type = BROADCAST_PRESSURE_VALUE;
+   d_msg.pressure =  pressure.value;
    osMessagePut(display_task_msg_q_id,(uint32_t)&d_msg,0);  
    
-   a_msg.type = ALARM_PRESSURE_VALUE;
-   a_msg.value =  pressure.value;
+   a_msg.type = BROADCAST_PRESSURE_VALUE;
+   a_msg.pressure =  pressure.value;
    osMessagePut(alarm_task_msg_q_id,(uint32_t)&a_msg,0);  
-   }
-   
+   }  
   }
+  
+  /*压力主动请求消息处理*/
+  if(ptr_msg->type == REQ_PRESSURE_VALUE){
+    response_msg.type = RESPONSE_PRESSURE_VALUE;
+    response_msg.pressure =  pressure.value;
+    osMessagePut(ptr_msg->req_q_id,(uint32_t)&response_msg,0);  
+  }
+  
   
   }
  }

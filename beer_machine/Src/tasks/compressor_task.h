@@ -14,20 +14,6 @@
 
 COMPRESSOR_TASK_BEGIN
 
-typedef enum
-{
-C_TEMPERATURE_VALUE=0
-}compressor_msg_type_t;
-
-
-typedef struct
-{
-compressor_msg_type_t type;
-int16_t               value;
-}compressor_msg_t;
-
-
-
 extern osThreadId   compressor_task_hdl;
 extern osMessageQId compressor_task_msg_q_id;
 void compressor_task(void const *argument);

@@ -19,21 +19,6 @@ extern osMessageQId temperature_task_msg_q_id;
 void temperature_task(void const *argument);
 
 
-typedef enum
-{
-T_ADC_COMPLETED=0,
-T_REQ_TEMPERATURE
-}temperature_msg_type_t;
-
-
-typedef struct
-{
-temperature_msg_type_t type;
-uint16_t               value;
-}temperature_msg_t;
-
-
-
 #define  TEMPERATURE_TASK_T_HOLD_TIME              8000/*温度显示保持时间 单位:ms*/
 
 

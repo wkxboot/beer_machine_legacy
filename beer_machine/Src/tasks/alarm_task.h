@@ -14,24 +14,18 @@
 
 ALARM_TASK_BEGIN
 
-typedef enum
-{
-ALARM_PRESSURE_VALUE=0,
-ALARM_SW_SHORT_PRESS,
-ALARM_SW_LONG_PRESS
-}alarm_msg_type_t;
+#define  ALARM_TASK_SWITCH_MONITOR_TIMEOUT        10  /*按键监视间隔时间 单位:ms*/
+#define  ALARM_TASK_BUZZER_MONITOR_TIMEOUT        10  /*按键监视间隔时间 单位:ms*/
+#define  ALARM_TASK_MSG_SEND_TIMEOUT              5   /*报警任务消息发送时间 单位:ms*/
+
+#define  ALARM_TASK_MSG_WAIT_TIMEOUT              osWaitForever /*报警任务消息等待时间 单位:ms*/
 
 
-typedef struct
-{
-alarm_msg_type_t  type;
-uint16_t          value;
-}alarm_msg_t;
-
-#define  ALARM_TASK_SW_SHORT_PRESS_TIMEOUT        (60)    /*按键短按有效时间 单位:ms*/
+#define  ALARM_TASK_SW_SHORT_PRESS_TIMEOUT        (50)    /*按键短按有效时间 单位:ms*/
 #define  ALARM_TASK_SW_LONG_PRESS_TIMEOUT         (3*1000)/*按键长按有效时间 单位:ms*/
 
-#define  ALARM_TASK_MSG_WAIT_TIMEOUT              10/*报警任务运行最大间隔 单位:ms*/
+
+
 #define  ALARM_TASK_PRESSURE_ALARM_VALUE          99/*报警值放大10倍       单位:kg/cm2*/
 
 #define  ALARM_TASK_ALARM_ON_FIRST_TIMEOUT        (1*60*1000) /*第一次报警时间     单位:ms*/   

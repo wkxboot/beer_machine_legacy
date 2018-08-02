@@ -19,21 +19,6 @@ extern osMessageQId pressure_task_msg_q_id;
 void pressure_task(void const *argument);
 
 
-typedef enum
-{
-P_ADC_COMPLETED=0,
-P_REQ_PRESSURE
-}pressure_msg_type_t;
-
-
-typedef struct
-{
-pressure_msg_type_t type;
-uint16_t            value;
-}pressure_msg_t;
-
-
-
 #define  PRESSURE_VALUE_IN_KG_CM2_MAX              99 /*最大显示压力。10倍 9.9kg/cm2*/
 #define  PRESSURE_VALUE_IN_KG_CM2_MIN              0  /*最小显示压力。10倍 0kg/cm2*/
  
@@ -45,7 +30,7 @@ uint16_t            value;
 #define  PRESSURE_SENSOR_OUTPUT_VOLTAGE_MAX        4.5 /*压力传感器最大输出电压 单位:V*/
 
 #define  PRESSURE_SENSOR_INPUT_PA_MIN             (5000.0)/*压力传感器最小输入压力 单位:Pa*/
-#define  PRESSURE_SENSOR_INPUT_PA_MAX             (10*1000000.0)/*压力传感器最大输入压力 单位:Pa*/
+#define  PRESSURE_SENSOR_INPUT_PA_MAX             (1*1000000.0)/*压力传感器最大输入压力 单位:Pa*/
 
 
 

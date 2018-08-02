@@ -26,8 +26,8 @@ void adc_task(void const * argument);
 
 
 #define  ADC_TASK_ADC_SAMPLE_MAX               48/*ADC取样次数*/
-#define  ADC_TASK_TEMPERATURE_IDX              0 /*温度取样序号*/
-#define  ADC_TASK_PRESSURE_IDX                 1 /*压力取样序号*/
+#define  ADC_TASK_TEMPERATURE_IDX              1 /*温度取样序号*/
+#define  ADC_TASK_PRESSURE_IDX                 0 /*压力取样序号*/
 
 #define  ADC_TASK_INTERVAL                     10 /*ADC取样间隔*/
 #define  ADC_TASK_ADC_TIMEOUT                  5  /*ADC取样超时时间*/

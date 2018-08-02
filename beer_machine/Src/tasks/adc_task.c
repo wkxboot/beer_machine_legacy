@@ -16,8 +16,8 @@ static uint16_t adc_sample[2];
 static uint32_t adc_cusum[2];
 static uint16_t adc_average[2];
 
-static temperature_msg_t t_msg;
-static pressure_msg_t    p_msg;
+static task_msg_t    t_msg;
+static task_msg_t    p_msg;
 
 
 void  HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc)
@@ -44,6 +44,17 @@ static int adc_start()
   return 0;
 }
 
+static int adc_stop()
+{
+  HAL_StatusTypeDef status;
+  status =HAL_ADC_Stop_DMA(&hadc1);
+  if(status != HAL_OK){
+   log_error("stop adc dma error:%d\r\n",status);
+   return -1;
+  }
+  
+  return 0;
+}
 static void adc_reset()
 {
   HAL_ADC_MspDeInit(&hadc1);
@@ -60,6 +71,7 @@ void adc_task(void const * argument)
   /*等待任务同步*/
   xEventGroupSync(tasks_sync_evt_group_hdl,TASKS_SYNC_EVENT_ADC_TASK_RDY,TASKS_SYNC_EVENT_ALL_TASKS_RDY,osWaitForever);
   log_debug("adc task sync ok.\r\n");
+  adc_stop();
   while(1){
   osDelay(ADC_TASK_INTERVAL);
   result = adc_start();
@@ -82,9 +94,9 @@ void adc_task(void const * argument)
          t_sample_err_cnt++;
     
          if(t_sample_err_cnt >= ADC_TASK_ADC_ERR_MAX){
-         log_error("temperature  sample error.\r\n");
+         log_error("temperature sample error.\r\n");
          t_msg.type=T_ADC_COMPLETED;
-         t_msg.value=ADC_TASK_ADC_ERR_VALUE;         
+         t_msg.adc=ADC_TASK_ADC_ERR_VALUE;         
          status = osMessagePut(temperature_task_msg_q_id,(uint32_t)&t_msg,0);
          if(status !=osOK){
          log_error("put err temperature msg error:%d\r\n",status);
@@ -100,7 +112,7 @@ void adc_task(void const * argument)
      adc_cusum[ADC_TASK_TEMPERATURE_IDX]=0;
      t_sample_cnt=0;
      t_msg.type=T_ADC_COMPLETED;
-     t_msg.value=adc_average[ADC_TASK_TEMPERATURE_IDX];  
+     t_msg.adc=adc_average[ADC_TASK_TEMPERATURE_IDX];  
      status = osMessagePut(temperature_task_msg_q_id,(uint32_t)&t_msg,0);
      if(status !=osOK){
       log_error("put temperature msg error:%d\r\n",status);
@@ -119,7 +131,7 @@ void adc_task(void const * argument)
          if(p_sample_err_cnt >= ADC_TASK_ADC_ERR_MAX){
          log_error("pressure  sample error.\r\n");
          p_msg.type=P_ADC_COMPLETED;
-         p_msg.value=ADC_TASK_ADC_ERR_VALUE; 
+         p_msg.adc=ADC_TASK_ADC_ERR_VALUE; 
          status = osMessagePut(pressure_task_msg_q_id,(uint32_t)&p_msg,0);    
          if(status !=osOK){
          log_error("put err pressure msg error:%d\r\n",status);
@@ -135,7 +147,7 @@ void adc_task(void const * argument)
      adc_cusum[ADC_TASK_PRESSURE_IDX]=0;
      p_sample_cnt=0;
      p_msg.type=P_ADC_COMPLETED;
-     p_msg.value=adc_average[ADC_TASK_PRESSURE_IDX];  
+     p_msg.adc=adc_average[ADC_TASK_PRESSURE_IDX];  
      status = osMessagePut(pressure_task_msg_q_id,(uint32_t)&p_msg,0);
      if(status !=osOK){
      log_error("put error pressure msg error:%d\r\n",status);

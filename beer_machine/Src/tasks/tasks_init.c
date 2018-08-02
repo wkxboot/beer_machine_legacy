@@ -7,7 +7,6 @@
 EventGroupHandle_t tasks_sync_evt_group_hdl;
 
 
-
 void tasks_init()
 {
  tasks_sync_evt_group_hdl=xEventGroupCreate(); 
