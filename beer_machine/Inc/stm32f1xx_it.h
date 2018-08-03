@@ -55,8 +55,6 @@ void UsageFault_Handler(void);
 void DebugMon_Handler(void);
 void SysTick_Handler(void);
 void DMA1_Channel1_IRQHandler(void);
-void USB_LP_CAN1_RX0_IRQHandler(void);
-void EXTI9_5_IRQHandler(void);
 void SPI2_IRQHandler(void);
 void USART1_IRQHandler(void);
 void USART2_IRQHandler(void);

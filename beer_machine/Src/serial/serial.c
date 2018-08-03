@@ -28,13 +28,12 @@ SERIAL_FALSE=0
 #error "error in buffer size."
 #endif
 
-
 typedef struct
 {
 uint8_t     buffer[BUFFER_SIZE_MAX];
 uint32_t    read_pos;
 uint32_t    write_pos;
-
+uint16_t    size;
 uint16_t    mask;
 }serial_fifo_t;
 

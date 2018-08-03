@@ -11,26 +11,22 @@ SEGGER_RTT_Init();
 #endif
 
 #if  LOG_USE_SERIAL > 0
-void log_serial_init();
 log_serial_init();
 #endif
 
 log_debug("log init done.\r\n");
 }
 
-
-#if  LOG_USE_SERIAL > 0
-
-int fputc(int ch, FILE *f)
+uint16_t log_read(uint8_t *ptr_buffer,uint16_t buffer_size)
 {
-void log_serial_write_byte(uint8_t);
-log_serial_write_byte(ch);
-
-return ch;
-}
+uint16_t read_cnt;
+#if    LOG_USE_RTT > 0
+read_cnt = SEGGER_RTT_Read(0,ptr_buffer,buffer_size);
+#elif  LOG_USE_SERIAL > 0
+read_cnt = log_serial_read(ptr_buffer,buffer_size);
 #endif
-
-
+return read_cnt;
+}
 
 
 __weak uint32_t log_time(void)

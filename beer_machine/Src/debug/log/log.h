@@ -30,12 +30,15 @@ extern "C" {
 #endif
 #if  LOG_USE_SERIAL > 0
 #include "stdio.h"
+void log_serial_init();
+uint16_t log_serial_read(uint8_t *ptr_buffer,uint16_t buffer_size);
 #endif
 
 
 
 
 void log_init(void);
+uint16_t log_read(uint8_t *buffer,uint16_t buffer_size);
 void log_assert_handler(int line,char *file_name);
 uint32_t log_time(void);
 

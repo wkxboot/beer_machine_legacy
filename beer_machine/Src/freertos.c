@@ -53,6 +53,7 @@
 
 /* USER CODE BEGIN Includes */     
 #include "iwdg.h"
+#include "cpu_utils.h"
 #include "tasks_init.h"
 #include "adc_task.h"
 #include "alarm_task.h"
@@ -75,7 +76,6 @@ osThreadId defaultTaskHandle;
 /* Function prototypes -------------------------------------------------------*/
 void StartDefaultTask(void const * argument);
 
-extern void MX_USB_DEVICE_Init(void);
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 
 /* USER CODE BEGIN FunctionPrototypes */
@@ -216,15 +216,23 @@ void MX_FREERTOS_Init(void) {
 /* StartDefaultTask function */
 void StartDefaultTask(void const * argument)
 {
-  /* init code for USB_DEVICE */
-  MX_USB_DEVICE_Init();
 
   /* USER CODE BEGIN StartDefaultTask */
-  /* Infinite loop */
+  uint8_t debug[3];
+
   for(;;)
   {
     osDelay(200);
     sys_feed_dog();
+    if(log_read(debug,3)==3){
+      switch(debug[0]){
+      case 'u':
+      log_warning("cpu:%d%%.\r\n",osGetCPUUsage());
+      break;
+      default:
+      break;
+      }
+     }
   }
   /* USER CODE END StartDefaultTask */
 }

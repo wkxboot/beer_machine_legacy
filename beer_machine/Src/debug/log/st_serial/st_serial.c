@@ -35,15 +35,14 @@ st_serial = &huart1;
 serial_create(&st_serial_handle);
 serial_register_hal_driver(st_serial_handle,&driver);
 serial_open(st_serial_handle,1,115200,8,1);
-
 }
 
-void log_serial_write_byte(int ch)
+uint16_t log_serial_read(uint8_t *buffer,uint16_t cnt)
 {
- serial_write(st_serial_handle,(uint8_t *)&ch,1);
+ uint16_t read_cnt;
+ read_cnt = serial_read(st_serial_handle,buffer,cnt);
+ return read_cnt;
 }
-
-
 
 int st_serial_init(uint8_t port,uint32_t bauds,uint8_t data_bit,uint8_t stop_bit)
 {
@@ -113,4 +112,11 @@ void st_serial_isr(void)
 uint32_t log_time()
 {
   return osKernelSysTick();
+}
+
+
+int fputc(int ch, FILE *f)
+{
+serial_write(st_serial_handle,(uint8_t*)&ch,1);
+return ch;
 }

@@ -12,6 +12,7 @@ osMessageQId compressor_task_msg_q_id;
 osTimerId    compressor_timer_id;
 
 static task_msg_t  t_msg;
+static task_msg_t  c_msg;
 static task_msg_t  *ptr_msg;
 
 typedef enum
@@ -59,26 +60,17 @@ static void compressor_timer_stop()
  osTimerStop(compressor_timer_id);
  log_debug("压缩机定时器停止.\r\n");
 }
-static void compressor_timer_expired(void const * argument)
+static void compressor_timer_expired(void const *argument)
 {
   osStatus status;
- if(compressor_status == COMPRESSOR_STATUS_WORK){
-    compressor_pwr_turn_off();
-    compressor_status = COMPRESSOR_STATUS_REST;
-    compressor_timer_start_rest_timer();
-    log_debug("压缩机到达最长工作时间.关压缩机\r\n");
- }else{
-    compressor_status = COMPRESSOR_STATUS_RDY;
-   /*需要请求当前温度值，以判断是否需要控制压缩机*/
-   log_debug("压缩机定时器到达.请求温度.\r\n");
-   t_msg.type=REQ_TEMPERATURE_VALUE; 
-   t_msg.req_q_id = compressor_task_msg_q_id;
-   status = osMessagePut(temperature_task_msg_q_id,(uint32_t)&t_msg,0);
-   if(status !=osOK){
-   log_error("put temperature msg error:%d\r\n",status);
+  c_msg.type = COMPRESSOR_TIMER_EXPIRED;
+  status = osMessagePut(compressor_task_msg_q_id,(uint32_t)&c_msg,0);
+  if(status !=osOK){
+  log_error("put compressor msg error:%d\r\n",status);
   }
- }
+  
 }
+
 
 static void compressor_pwr_turn_on()
 {
@@ -93,6 +85,7 @@ void compressor_task(void const *argument)
 {
   int16_t t;
   osEvent os_msg;
+  osStatus status;
   
   osMessageQDef(compressor_msg_q,4,uint32_t);
   compressor_task_msg_q_id = osMessageCreate(osMessageQ(compressor_msg_q),compressor_task_hdl);
@@ -110,7 +103,7 @@ void compressor_task(void const *argument)
   os_msg = osMessageGet(compressor_task_msg_q_id,COMPRESSOR_TASK_MSG_WAIT_TIMEOUT);
   if(os_msg.status == osEventMessage){  
    ptr_msg =(task_msg_t*)os_msg.value.v;
-   
+   /*温度消息处理*/
   if(ptr_msg->type == RESPONSE_TEMPERATURE_VALUE ||ptr_msg->type == BROADCAST_TEMPERATURE_VALUE){ 
   t=ptr_msg->temperature;   
   if(t == TEMPERATURE_ERR_VALUE_SENSOR    ||\
@@ -136,6 +129,28 @@ void compressor_task(void const *argument)
     }
   } 
  }
+ 
+ /*定时器时间到达处理处理*/
+ if(ptr_msg->type == COMPRESSOR_TIMER_EXPIRED){
+   if(compressor_status == COMPRESSOR_STATUS_WORK){
+   compressor_pwr_turn_off();
+   compressor_status = COMPRESSOR_STATUS_REST;
+   compressor_timer_start_rest_timer();
+   log_debug("压缩机到达最长工作时间.关压缩机\r\n");
+   }else{
+   compressor_status = COMPRESSOR_STATUS_RDY;
+   /*需要请求当前温度值，以判断是否需要控制压缩机*/
+   log_debug("压缩机定时器到达.请求温度.\r\n");
+   t_msg.type=REQ_TEMPERATURE_VALUE; 
+   t_msg.req_q_id = compressor_task_msg_q_id;
+   status = osMessagePut(temperature_task_msg_q_id,(uint32_t)&t_msg,0);
+   if(status !=osOK){
+   log_error("put temperature msg error:%d\r\n",status);
+  }
+ }    
+ }
+ 
+ 
  
   }
   }

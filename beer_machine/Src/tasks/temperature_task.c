@@ -1,6 +1,7 @@
 #include "cmsis_os.h"
 #include "tasks_init.h"
 #include "adc_task.h"
+#include "alarm_task.h"
 #include "compressor_task.h"
 #include "temperature_task.h"
 #include "display_task.h"
@@ -12,6 +13,7 @@ osThreadId   temperature_task_hdl;
 osMessageQId temperature_task_msg_q_id;
 
 static task_msg_t *ptr_msg;
+static task_msg_t  a_msg;
 static task_msg_t  c_msg;
 static task_msg_t  d_msg;
 static task_msg_t  response_msg;
@@ -26,9 +28,6 @@ static int16_t const t_r_map[][2]={
   {42,989}   ,{43,951}   ,{44,914}   ,{45,879}  ,{46,845} ,{47,813} ,{48,783} ,{49,753} ,{50,725}
 };
 
-
-#define  TR_MAP_IDX_MIN                    2  /*t_r_map[2 ][1] r=10920 -10摄氏度*/ 
-#define  TR_MAP_IDX_MAX                    62 /*t_r_map[62][1] r=7251   50摄氏度*/ 
 
 #define  TR_MAP_IDX_OVER_HIGH_ERR          0xff
 #define  TR_MAP_IDX_OVER_LOW_ERR           0xfe
@@ -171,6 +170,11 @@ void temperature_task(void const *argument)
    if(temperature.changed == TRUE){
    log_debug("teperature changed dir:%d value:%d C delt_time:%d.\r\n",temperature.dir,temperature.value,delt_time);
    temperature.changed=FALSE;
+   
+   a_msg.type = BROADCAST_TEMPERATURE_VALUE;
+   a_msg.temperature= temperature.value;
+   osMessagePut(alarm_task_msg_q_id,(uint32_t)&a_msg,0);
+   
    c_msg.type = BROADCAST_TEMPERATURE_VALUE;
    c_msg.temperature= temperature.value;
    osMessagePut(compressor_task_msg_q_id,(uint32_t)&c_msg,0);

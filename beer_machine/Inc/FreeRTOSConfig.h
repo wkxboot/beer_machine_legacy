@@ -178,6 +178,10 @@ standard names. */
 /* #define xPortSysTickHandler SysTick_Handler */
 
 /* USER CODE BEGIN Defines */   	      
+#define traceTASK_SWITCHED_IN()  extern void StartIdleMonitor(void); \
+                                         StartIdleMonitor()
+#define traceTASK_SWITCHED_OUT() extern void EndIdleMonitor(void);   \
+                                         EndIdleMonitor()
 /* Section where parameter definitions can be added (for instance, to override default ones in FreeRTOS.h) */
 /* USER CODE END Defines */ 
 
