@@ -27,7 +27,7 @@ void display_task(void const *argument)
   
   led_display_init();
   
-  osMessageQDef(display_msg_q,4,uint32_t);
+  osMessageQDef(display_msg_q,6,uint32_t);
   display_task_msg_q_id = osMessageCreate(osMessageQ(display_msg_q),display_task_hdl);
   log_assert(display_task_msg_q_id);
   /*等待任务同步*/

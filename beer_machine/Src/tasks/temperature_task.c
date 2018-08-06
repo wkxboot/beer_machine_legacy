@@ -127,7 +127,7 @@ void temperature_task(void const *argument)
   int16_t  t;
   osEvent  os_msg;
   
-  osMessageQDef(temperature_msg_q,4,uint32_t);
+  osMessageQDef(temperature_msg_q,6,uint32_t);
   temperature_task_msg_q_id = osMessageCreate(osMessageQ(temperature_msg_q),temperature_task_hdl);
   log_assert(temperature_task_msg_q_id);
   
@@ -173,22 +173,22 @@ void temperature_task(void const *argument)
    
    a_msg.type = BROADCAST_TEMPERATURE_VALUE;
    a_msg.temperature= temperature.value;
-   osMessagePut(alarm_task_msg_q_id,(uint32_t)&a_msg,0);
+   osMessagePut(alarm_task_msg_q_id,(uint32_t)&a_msg,TEMPERATURE_TASK_PUT_MSG_TIMEOUT);
    
    c_msg.type = BROADCAST_TEMPERATURE_VALUE;
    c_msg.temperature= temperature.value;
-   osMessagePut(compressor_task_msg_q_id,(uint32_t)&c_msg,0);
+   osMessagePut(compressor_task_msg_q_id,(uint32_t)&c_msg,TEMPERATURE_TASK_PUT_MSG_TIMEOUT);
    
    d_msg.type = BROADCAST_TEMPERATURE_VALUE;
    d_msg.temperature =  temperature.value;
-   osMessagePut(display_task_msg_q_id,(uint32_t)&d_msg,0);
+   osMessagePut(display_task_msg_q_id,(uint32_t)&d_msg,TEMPERATURE_TASK_PUT_MSG_TIMEOUT);
    }
   }
   /*主动请求温度消息处理*/
   if(ptr_msg->type == REQ_TEMPERATURE_VALUE){
    response_msg.type = RESPONSE_TEMPERATURE_VALUE;
    response_msg.temperature= temperature.value;
-   osMessagePut(ptr_msg->req_q_id,(uint32_t)&response_msg,0); 
+   osMessagePut(ptr_msg->req_q_id,(uint32_t)&response_msg,TEMPERATURE_TASK_PUT_MSG_TIMEOUT); 
   }
  }
  }

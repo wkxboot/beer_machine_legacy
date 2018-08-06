@@ -64,7 +64,7 @@ static void compressor_timer_expired(void const *argument)
 {
   osStatus status;
   c_msg.type = COMPRESSOR_TIMER_EXPIRED;
-  status = osMessagePut(compressor_task_msg_q_id,(uint32_t)&c_msg,0);
+  status = osMessagePut(compressor_task_msg_q_id,(uint32_t)&c_msg,COMPRESSOR_TASK_PUT_MSG_TIMEOUT);
   if(status !=osOK){
   log_error("put compressor msg error:%d\r\n",status);
   }
@@ -87,7 +87,7 @@ void compressor_task(void const *argument)
   osEvent os_msg;
   osStatus status;
   
-  osMessageQDef(compressor_msg_q,4,uint32_t);
+  osMessageQDef(compressor_msg_q,6,uint32_t);
   compressor_task_msg_q_id = osMessageCreate(osMessageQ(compressor_msg_q),compressor_task_hdl);
   log_assert(compressor_task_msg_q_id);
   /*开机先关闭压缩机*/
@@ -143,7 +143,7 @@ void compressor_task(void const *argument)
    log_debug("压缩机定时器到达.请求温度.\r\n");
    t_msg.type=REQ_TEMPERATURE_VALUE; 
    t_msg.req_q_id = compressor_task_msg_q_id;
-   status = osMessagePut(temperature_task_msg_q_id,(uint32_t)&t_msg,0);
+   status = osMessagePut(temperature_task_msg_q_id,(uint32_t)&t_msg,COMPRESSOR_TASK_PUT_MSG_TIMEOUT);
    if(status !=osOK){
    log_error("put temperature msg error:%d\r\n",status);
   }

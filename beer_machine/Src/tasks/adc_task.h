@@ -32,6 +32,8 @@ void adc_task(void const * argument);
 #define  ADC_TASK_INTERVAL                     10 /*ADC取样间隔*/
 #define  ADC_TASK_ADC_TIMEOUT                  5  /*ADC取样超时时间*/
 
+#define  ADC_TASK_PUT_MSG_TIMEOUT              5  /*发送消息超时时间*/
+
 #define  ADC_TASK_ADC_COMPLETED_SIGNAL         (1<<0)
 #define  ADC_TASK_ADC_ERROR_SIGNAL             (1<<1)
 #define  ADC_TASK_ALL_SIGNALS                  ((1<<2)-1)

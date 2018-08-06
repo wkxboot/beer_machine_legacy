@@ -271,7 +271,7 @@ void alarm_task(void const *argument)
   
   ptr_alarm=&alarm;
   
-  osMessageQDef(alarm_msg_q,4,uint32_t);
+  osMessageQDef(alarm_msg_q,6,uint32_t);
   alarm_task_msg_q_id = osMessageCreate(osMessageQ(alarm_msg_q),alarm_task_hdl);
   log_assert(alarm_task_msg_q_id);
  
@@ -314,7 +314,9 @@ void alarm_task(void const *argument)
   /*广播温度值 和 主动请求的温度值处理*/ 
    if(ptr_msg->type == RESPONSE_TEMPERATURE_VALUE || ptr_msg->type == BROADCAST_TEMPERATURE_VALUE){
    temperature=ptr_msg->temperature;
-   if(temperature >= ALARM_TASK_TEMPERATURE_ALARM_VALUE_HIGH || temperature <= ALARM_TASK_TEMPERATURE_ALARM_VALUE_LOW){
+   if(temperature == TEMPERATURE_ERR_VALUE_SENSOR    ||\
+      temperature == TEMPERATURE_ERR_VALUE_OVER_HIGH ||\
+      temperature == TEMPERATURE_ERR_VALUE_OVER_LOW     ){
     if(ptr_alarm->t_status == ALARM_OFF){
     ptr_alarm->t_status = ALARM_ON_WAIT_CLEAR;
     temperature_alarm_on_timeout_timer_start();
@@ -326,7 +328,7 @@ void alarm_task(void const *argument)
    }else if(ptr_alarm->t_status != ALARM_OFF){
     ptr_alarm->t_status = ALARM_OFF; 
     temperature_alarm_timer_stop();
-    log_warning("温度%d C恢复正常，关闭报警.\r\n",pressure);
+    log_warning("温度%d C恢复正常，关闭报警.\r\n",temperature);
    }
   }
   
@@ -334,7 +336,7 @@ void alarm_task(void const *argument)
  /*压力报警定时器到达消息处理*/
  if(ptr_msg->type == PRESSURE_ALARM_TIMER_EXPIRED){
  if(ptr_alarm->p_status == ALARM_ON_WAIT_CLEAR){
-  log_warning("超时自动解除第1次报警.\r\n");
+  log_warning("超时自动解除压力第1次报警.\r\n");
   ptr_alarm->p_status = ALARM_CLEAR_WAIT_CONFIRM; 
   pressure_alarm_clear_timeout_timer_start();
  }else if(ptr_alarm->p_status == ALARM_CLEAR_WAIT_CONFIRM){
@@ -366,18 +368,17 @@ void alarm_task(void const *argument)
  }
  
  
- 
- 
-    /*短按键消息处理*/
-    if(ptr_msg->type == ALARM_SW_SHORT_PRESS){
-    if(ptr_alarm->p_status == ALARM_ON_WAIT_CLEAR || ptr_alarm->t_status == ALARM_ON_WAIT_CLEAR){
-      
-    if(ptr_alarm->p_status == ALARM_ON_WAIT_CLEAR){
+  /*短按键消息处理*/
+  if(ptr_msg->type == ALARM_SW_SHORT_PRESS){
+  if(ptr_alarm->p_status == ALARM_ON_WAIT_CLEAR ||\
+     ptr_alarm->t_status == ALARM_ON_WAIT_CLEAR){
+   
+  if(ptr_alarm->p_status == ALARM_ON_WAIT_CLEAR){
      log_warning("短按.手动解除压力第1次报警.\r\n");
      ptr_alarm->p_status = ALARM_CLEAR_WAIT_CONFIRM; 
      pressure_alarm_clear_timeout_timer_start();
-    }
-    if(ptr_alarm->t_status == ALARM_ON_WAIT_CLEAR){
+  }
+  if(ptr_alarm->t_status == ALARM_ON_WAIT_CLEAR){
      log_warning("短按.手动解除温度第1次报警.\r\n");
      ptr_alarm->t_status = ALARM_CLEAR_WAIT_CONFIRM; 
      temperature_alarm_clear_timeout_timer_start();
@@ -388,16 +389,27 @@ void alarm_task(void const *argument)
    }
   
   
-    /*长按键消息处理*/
-    if(ptr_msg->type == ALARM_SW_LONG_PRESS){
-    if(ptr_alarm->p_status == ALARM_CONFIRM_WAIT_CLEAR || ptr_alarm->t_status == ALARM_CONFIRM_WAIT_CLEAR){
+  /*长按键消息处理*/
+  if(ptr_msg->type == ALARM_SW_LONG_PRESS){
+  if(ptr_alarm->p_status == ALARM_ON_WAIT_CLEAR      ||\
+     ptr_alarm->p_status == ALARM_CONFIRM_WAIT_CLEAR ||\
+     ptr_alarm->t_status == ALARM_ON_WAIT_CLEAR      ||\
+     ptr_alarm->t_status == ALARM_CONFIRM_WAIT_CLEAR)  {
       
-    if(ptr_alarm->p_status == ALARM_CONFIRM_WAIT_CLEAR){
+    if(ptr_alarm->p_status == ALARM_ON_WAIT_CLEAR){
+      ptr_alarm->p_status = ALARM_CLEAR_WAIT_OFF;
+      pressure_alarm_timer_stop();
+      log_warning("长按.一步彻底解除压力报警.\r\n");
+    }else if( ptr_alarm->p_status == ALARM_CONFIRM_WAIT_CLEAR ){
     ptr_alarm->p_status = ALARM_CLEAR_WAIT_OFF; 
     log_warning("长按.解除压力第2次报警.\r\n");
     }
     
-    if(ptr_alarm->t_status == ALARM_CONFIRM_WAIT_CLEAR){
+    if(ptr_alarm->t_status == ALARM_ON_WAIT_CLEAR){
+     ptr_alarm->t_status = ALARM_CLEAR_WAIT_OFF;
+     temperature_alarm_timer_stop();
+     log_warning("长按.一步彻底解除温度报警.\r\n");  
+    }else if(ptr_alarm->t_status == ALARM_CONFIRM_WAIT_CLEAR){
     ptr_alarm->t_status = ALARM_CLEAR_WAIT_OFF; 
     log_warning("长按.解除温度第2次报警.\r\n");
     }  

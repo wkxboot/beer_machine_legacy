@@ -19,7 +19,7 @@ extern osMessageQId temperature_task_msg_q_id;
 void temperature_task(void const *argument);
 
 
-#define  TEMPERATURE_TASK_T_HOLD_TIME              8000/*温度显示保持时间 单位:ms*/
+#define  TEMPERATURE_TASK_T_HOLD_TIME              5000/*温度显示保持时间 单位:ms*/
 
 
 #define  TEMPERATURE_SENSOR_ADC_VALUE_MAX          4095/*温度AD转换最大数值*/      
@@ -29,6 +29,7 @@ void temperature_task(void const *argument);
 
 
 #define  TEMPERATURE_TASK_MSG_WAIT_TIMEOUT         osWaitForever
+#define  TEMPERATURE_TASK_PUT_MSG_TIMEOUT          5  /*发送消息超时时间*/
 
 #define  TR_MAP_IDX_MIN                            2  /*显示最小值t_r_map[2 ][1] r=10920 -10摄氏度*/ 
 #define  TR_MAP_IDX_MAX                            62 /*显示最大值t_r_map[62][1] r=7251   50摄氏度*/ 

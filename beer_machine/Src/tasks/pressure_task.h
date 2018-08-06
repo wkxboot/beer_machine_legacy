@@ -19,8 +19,8 @@ extern osMessageQId pressure_task_msg_q_id;
 void pressure_task(void const *argument);
 
 
-#define  PRESSURE_VALUE_IN_KG_CM2_MAX              99 /*最大显示压力。10倍 9.9kg/cm2*/
-#define  PRESSURE_VALUE_IN_KG_CM2_MIN              0  /*最小显示压力。10倍 0kg/cm2*/
+#define  PRESSURE_VALUE_IN_KG_CM2_MAX              99  /*最大显示压力。放大10倍 9.9kg/cm2*/
+#define  PRESSURE_VALUE_IN_KG_CM2_MIN              -1  /*最小显示压力。放大10倍 -0.1kg/cm2*/
  
 #define  PA_VALUE_PER_1KG_CM2                      98066.5 /*单位换算 1kg/cm2 == 98066.5Pa */
 
@@ -40,6 +40,7 @@ void pressure_task(void const *argument);
 
 
 #define  PRESSURE_TASK_MSG_WAIT_TIMEOUT            osWaitForever
+#define  PRESSURE_TASK_PUT_MSG_TIMEOUT             5
 
 #define  PRESSURE_ERR_VALUE_OVER_HIGH              0xe4/*压力显示过载错误代码*/
 #define  PRESSURE_ERR_VALUE_OVER_LOW               0xe5/*压力显示低载错误代码*/

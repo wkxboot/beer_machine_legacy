@@ -9,15 +9,6 @@ void bsp_board_init(void)
 }
 
 /*按键*/
-__weak void bsp_alarm_sw_it_callback()
-{
-  
-}
-void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
-{
-  bsp_alarm_sw_it_callback();
-}
-
 uint8_t bsp_is_alarm_sw_press()
 {
  GPIO_PinState status;

@@ -51,7 +51,7 @@ static uint8_t get_pressure(uint16_t adc)
  p=(p*10)/PA_VALUE_PER_1KG_CM2;
 
  log_one_line("v:%d mv   p:%d kg/cm2.",(uint16_t)(v*1000),(uint32_t)p);
- if(p < 0 ){
+ if(p < PRESSURE_VALUE_IN_KG_CM2_MIN ){
  log_error("pressure over low.\r\n");
  return  PRESSURE_ERR_VALUE_OVER_LOW;
  }else if(p > PRESSURE_VALUE_IN_KG_CM2_MAX){
@@ -70,7 +70,7 @@ void pressure_task(void const *argument)
   uint32_t delt_time;
   osEvent os_msg;
   
-  osMessageQDef(pressure_msg_q,4,uint32_t);
+  osMessageQDef(pressure_msg_q,6,uint32_t);
   pressure_task_msg_q_id = osMessageCreate(osMessageQ(pressure_msg_q),pressure_task_hdl);
   log_assert(pressure_task_msg_q_id);
   
@@ -114,11 +114,11 @@ void pressure_task(void const *argument)
    pressure.changed=FALSE;
    d_msg.type = BROADCAST_PRESSURE_VALUE;
    d_msg.pressure =  pressure.value;
-   osMessagePut(display_task_msg_q_id,(uint32_t)&d_msg,0);  
+   osMessagePut(display_task_msg_q_id,(uint32_t)&d_msg,PRESSURE_TASK_PUT_MSG_TIMEOUT);  
    
    a_msg.type = BROADCAST_PRESSURE_VALUE;
    a_msg.pressure =  pressure.value;
-   osMessagePut(alarm_task_msg_q_id,(uint32_t)&a_msg,0);  
+   osMessagePut(alarm_task_msg_q_id,(uint32_t)&a_msg,PRESSURE_TASK_PUT_MSG_TIMEOUT);  
    }  
   }
   
@@ -126,7 +126,7 @@ void pressure_task(void const *argument)
   if(ptr_msg->type == REQ_PRESSURE_VALUE){
     response_msg.type = RESPONSE_PRESSURE_VALUE;
     response_msg.pressure =  pressure.value;
-    osMessagePut(ptr_msg->req_q_id,(uint32_t)&response_msg,0);  
+    osMessagePut(ptr_msg->req_q_id,(uint32_t)&response_msg,PRESSURE_TASK_PUT_MSG_TIMEOUT);  
   }
   
   

@@ -97,7 +97,7 @@ void adc_task(void const * argument)
          log_error("temperature sample error.\r\n");
          t_msg.type=T_ADC_COMPLETED;
          t_msg.adc=ADC_TASK_ADC_ERR_VALUE;         
-         status = osMessagePut(temperature_task_msg_q_id,(uint32_t)&t_msg,0);
+         status = osMessagePut(temperature_task_msg_q_id,(uint32_t)&t_msg,ADC_TASK_PUT_MSG_TIMEOUT);
          if(status !=osOK){
          log_error("put err temperature msg error:%d\r\n",status);
          }   
@@ -113,7 +113,7 @@ void adc_task(void const * argument)
      t_sample_cnt=0;
      t_msg.type=T_ADC_COMPLETED;
      t_msg.adc=adc_average[ADC_TASK_TEMPERATURE_IDX];  
-     status = osMessagePut(temperature_task_msg_q_id,(uint32_t)&t_msg,0);
+     status = osMessagePut(temperature_task_msg_q_id,(uint32_t)&t_msg,ADC_TASK_PUT_MSG_TIMEOUT);
      if(status !=osOK){
       log_error("put temperature msg error:%d\r\n",status);
      }
@@ -132,7 +132,7 @@ void adc_task(void const * argument)
          log_error("pressure  sample error.\r\n");
          p_msg.type=P_ADC_COMPLETED;
          p_msg.adc=ADC_TASK_ADC_ERR_VALUE; 
-         status = osMessagePut(pressure_task_msg_q_id,(uint32_t)&p_msg,0);    
+         status = osMessagePut(pressure_task_msg_q_id,(uint32_t)&p_msg,ADC_TASK_PUT_MSG_TIMEOUT);    
          if(status !=osOK){
          log_error("put err pressure msg error:%d\r\n",status);
          }   
@@ -148,7 +148,7 @@ void adc_task(void const * argument)
      p_sample_cnt=0;
      p_msg.type=P_ADC_COMPLETED;
      p_msg.adc=adc_average[ADC_TASK_PRESSURE_IDX];  
-     status = osMessagePut(pressure_task_msg_q_id,(uint32_t)&p_msg,0);
+     status = osMessagePut(pressure_task_msg_q_id,(uint32_t)&p_msg,ADC_TASK_PUT_MSG_TIMEOUT);
      if(status !=osOK){
      log_error("put error pressure msg error:%d\r\n",status);
       }    
