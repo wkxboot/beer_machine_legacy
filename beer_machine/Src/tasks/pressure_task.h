@@ -42,9 +42,9 @@ void pressure_task(void const *argument);
 #define  PRESSURE_TASK_MSG_WAIT_TIMEOUT            osWaitForever
 #define  PRESSURE_TASK_PUT_MSG_TIMEOUT             5
 
-#define  PRESSURE_ERR_VALUE_OVER_HIGH              0xe4/*压力显示过载错误代码*/
-#define  PRESSURE_ERR_VALUE_OVER_LOW               0xe5/*压力显示低载错误代码*/
-#define  PRESSURE_ERR_VALUE_SENSOR                 0xe6/*压力显示AD传感器错误代码*/
+#define  PRESSURE_ERR_VALUE_OVER_HIGH              0xe3/*压力显示过载错误代码*/
+#define  PRESSURE_ERR_VALUE_OVER_LOW               0xe4/*压力显示低载错误代码*/
+#define  PRESSURE_ERR_VALUE_SENSOR                 0xe5/*压力显示AD传感器错误代码*/
 
 PRESSURE_TASK_END
 

@@ -36,7 +36,7 @@ void temperature_task(void const *argument);
 
 #define  TEMPERATURE_ERR_VALUE_OVER_HIGH           0xe0/*温度显示过高错误代码*/
 #define  TEMPERATURE_ERR_VALUE_OVER_LOW            0xe1/*温度显示过低错误代码*/
-#define  TEMPERATURE_ERR_VALUE_SENSOR              0xe3/*温度显示传感器错误代码*/
+#define  TEMPERATURE_ERR_VALUE_SENSOR              0xe2/*温度显示传感器错误代码*/
 
 TEMPERATURE_TASK_END
 

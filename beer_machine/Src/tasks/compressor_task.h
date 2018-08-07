@@ -30,7 +30,8 @@ void compressor_task(void const *argument);
 #define  COMPRESSOR_TASK_PUT_MSG_TIMEOUT       5             /*发送消息超时时间*/
 
 #define  COMPRESSOR_TASK_MSG_WAIT_TIMEOUT      osWaitForever
-#define  COMPRESSOT_TASK_WAIT_RDY_TIMEOUT      (5*1000)      /*压缩机上电后等待就绪的时间*/
+#define  COMPRESSOR_TASK_MUTEX_WAIT_TIMEOUT    osWaitForever
+#define  COMPRESSOT_TASK_WAIT_RDY_TIMEOUT      (1*60*1000)   /*压缩机上电后等待就绪的时间*/
 
 
 
