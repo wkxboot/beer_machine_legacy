@@ -53,6 +53,7 @@
 
 /* USER CODE BEGIN Includes */     
 #include "iwdg.h"
+#include "i2c.h"
 #include "cpu_utils.h"
 #include "tasks_init.h"
 #include "adc_task.h"
@@ -219,7 +220,13 @@ void StartDefaultTask(void const * argument)
 
   /* USER CODE BEGIN StartDefaultTask */
   uint8_t debug[3];
-
+  uint8_t w_eeprom[16],r_eeprom[16];
+  
+  HAL_StatusTypeDef status;
+  for(uint8_t i=0;i<16;i++){
+  w_eeprom[i]=i;
+  }
+  
   for(;;)
   {
     osDelay(200);
@@ -229,6 +236,25 @@ void StartDefaultTask(void const * argument)
       case 'u':
       log_warning("cpu:%d%%.\r\n",osGetCPUUsage());
       break;
+      
+      case 'w':
+      status = HAL_I2C_Mem_Write(&hi2c1,0xa0,0x00,I2C_MEMADD_SIZE_8BIT,w_eeprom,16,0xfff);
+      if(status !=HAL_OK){
+      log_error("write eeprom error.%d.\r\n",status);
+      }
+      log_debug("write eeprom ok.%d.\r\n",status);
+      break;
+     
+      case 'r':
+      status = HAL_I2C_Mem_Read(&hi2c1,0xa0,0x00,I2C_MEMADD_SIZE_8BIT,r_eeprom,16,0xfff);
+      if(status !=HAL_OK){
+      log_error("read eeprom error.%d.\r\n",status);
+      }
+      for(uint8_t i=0;i<16;i++){
+      log_debug("r[%d]=%d.\r\n",i,r_eeprom[i]);
+      }
+      break;
+      
       default:
       break;
       }

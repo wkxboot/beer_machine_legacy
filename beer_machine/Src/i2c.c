@@ -100,7 +100,9 @@ void HAL_I2C_MspInit(I2C_HandleTypeDef* i2cHandle)
     /* I2C1 clock enable */
     __HAL_RCC_I2C1_CLK_ENABLE();
   /* USER CODE BEGIN I2C1_MspInit 1 */
-
+   __HAL_RCC_GPIOB_CLK_ENABLE();
+   I2C1->CR1|=(1<<15);
+   I2C1->CR1&=~(1<<15);
   /* USER CODE END I2C1_MspInit 1 */
   }
 }
