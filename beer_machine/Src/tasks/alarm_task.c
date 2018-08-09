@@ -408,14 +408,17 @@ void alarm_task(void const *argument)
   /*广播压力值和主动请求的压力值处理*/ 
   if(ptr_msg->type == BROADCAST_PRESSURE_VALUE || ptr_msg->type == RESPONSE_PRESSURE_VALUE){
     pressure=ptr_msg->pressure;
-    if(pressure >= ALARM_TASK_PRESSURE_ALARM_VALUE){
+    if(pressure == PRESSURE_ERR_VALUE_OVER_HIGH ||\
+       pressure == PRESSURE_ERR_VALUE_OVER_LOW  ||\
+       pressure == PRESSURE_ERR_VALUE_SENSOR    ||\
+       pressure >= ALARM_TASK_PRESSURE_ALARM_VALUE){
     if(ptr_alarm->p_status == ALARM_OFF){
       ptr_alarm->p_status = ALARM_ON_WAIT_CLEAR;
       pressure_alarm_on_timer_start();
-      log_warning("压力:%d kg/cm2过高，第1次报警.\r\n",pressure);
+      log_warning("压力:%d kg/cm2异常，第1次报警.\r\n",pressure);
     }else if(ptr_alarm->p_status == ALARM_TIMEOUT_WAIT_CONFIRM){
       ptr_alarm->p_status = ALARM_CONFIRM_WAIT_CLEAR;
-      log_warning("压力:%d kg/cm2过高，第2次报警.\r\n",pressure);
+      log_warning("压力:%d kg/cm2异常，第2次报警.\r\n",pressure);
     }
     }else if(ptr_alarm->p_status != ALARM_OFF){
       ptr_alarm->p_status = ALARM_OFF;

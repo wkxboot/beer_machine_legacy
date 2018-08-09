@@ -67,7 +67,7 @@ void pressure_task(void const *argument)
   uint8_t p;
   uint16_t adc;
   uint32_t cur_time;
-  uint32_t delt_time;
+  uint32_t delta_time;
   osEvent os_msg;
   
   osMessageQDef(pressure_msg_q,6,uint32_t);
@@ -84,7 +84,7 @@ void pressure_task(void const *argument)
 
    ptr_msg=(task_msg_t*)os_msg.value.v;
    cur_time = osKernelSysTick(); 
-   delt_time = cur_time-pressure.time;
+   delta_time = cur_time-pressure.time;
    
    /*压力ADC完成消息处理*/
    if(ptr_msg->type == P_ADC_COMPLETED){
@@ -102,7 +102,7 @@ void pressure_task(void const *argument)
     }else if(p > pressure.value && pressure.dir == P_DIR_UP    ||\
              p < pressure.value && pressure.dir == P_DIR_DOWN  ||\
              pressure.dir == P_DIR_INIT                        ||\
-             delt_time >= PRESSURE_TASK_P_HOLD_TIME ){      
+             delta_time >= PRESSURE_TASK_P_HOLD_TIME ){      
    pressure.dir = p > pressure.value?P_DIR_UP:P_DIR_DOWN;
    pressure.value = p;
    pressure.time =cur_time; 
@@ -110,7 +110,7 @@ void pressure_task(void const *argument)
    }
    }
    if(pressure.changed == TRUE){
-   log_debug("pressure changed. dir :%d  value:%d kg/cm2  delt_time:%d ms.\r\n" ,pressure.dir,p,delt_time);  
+   log_debug("pressure changed. dir :%d  value:%d kg/cm2  delta_time:%d ms.\r\n" ,pressure.dir,p,delta_time);  
    pressure.changed=FALSE;
    d_msg.type = BROADCAST_PRESSURE_VALUE;
    d_msg.pressure =  pressure.value;

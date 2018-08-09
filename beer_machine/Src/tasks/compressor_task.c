@@ -43,9 +43,12 @@ static void compressor_work_timer_start(void);
 static void compressor_wait_timer_start(void);
 static void compressor_rest_timer_start(void);
 
+
 static void compressor_work_timer_stop(void);
+/*
 static void compressor_wait_timer_stop(void);
 static void compressor_rest_timer_stop(void);
+*/
 
 static void compressor_work_timer_expired(void const *argument);
 static void compressor_wait_timer_expired(void const *argument);
@@ -100,16 +103,20 @@ static void compressor_wait_timer_init()
  log_assert(compressor_wait_timer_id);
 }
 
+
 static void compressor_wait_timer_start(void)
 {
  osTimerStart(compressor_wait_timer_id,COMPRESSOR_TASK_WAIT_TIMEOUT);  
  log_debug("压缩机等待定时器开始.\r\n");
 }
+
+/*
 static void compressor_wait_timer_stop(void)
 {
  osTimerStop(compressor_wait_timer_id);  
  log_debug("压缩机等待定时器停止.\r\n");  
 }
+*/
 
 static void compressor_wait_timer_expired(void const *argument)
 {
@@ -140,12 +147,13 @@ static void compressor_rest_timer_start(void)
  log_debug("压缩机休息定时器开始.\r\n");
 }
 
+/*
 static void compressor_rest_timer_stop(void)
 {
  osTimerStop(compressor_rest_timer_id);
  log_debug("压缩机休息定时器停止.\r\n");
 }
-
+*/
 static void compressor_rest_timer_expired(void const *argument)
 {
   /*首先避免竟态，获取mutex*/
@@ -233,26 +241,28 @@ void compressor_task(void const *argument)
   t=ptr_msg->temperature;   
   if(t == TEMPERATURE_ERR_VALUE_SENSOR    ||\
      t == TEMPERATURE_ERR_VALUE_OVER_HIGH ||\
-     t == TEMPERATURE_ERR_VALUE_OVER_LOW){     
-      if(compressor.status != COMPRESSOR_STATUS_RDY){
+     t == TEMPERATURE_ERR_VALUE_OVER_LOW){ 
+      log_error("温度错误.准备关压缩机.code:%d\r\n",t);
+      if(compressor.status == COMPRESSOR_STATUS_WORK){
       compressor_work_timer_stop();
-      compressor_rest_timer_stop();
-      compressor_wait_timer_stop();
-      compressor.status = COMPRESSOR_STATUS_RDY;
+      compressor.status = COMPRESSOR_STATUS_WAIT;
       compressor_pwr_turn_off();
-      log_error("温度错误.关压缩机.code:%d\r\n",t);
+      compressor_wait_timer_start();
+      log_error("关闭压缩机->wait\r\n");
+      }else{
+      log_error("压缩机已是关闭状态.skip.\r\n");
       }
    }else if(t >= COMPRESSOR_WORK_TEMPERATURE && compressor.status == COMPRESSOR_STATUS_RDY){
      compressor.status = COMPRESSOR_STATUS_WORK;
      compressor_pwr_turn_on();
      compressor_work_timer_start();
-     log_debug("温度:%d 高于开机温度.开压缩机.\r\n",t);
+     log_debug("温度:%d 高于开机温度.开启压缩机.\r\n",t);
     }else if(t <= COMPRESSOR_STOP_TEMPERATURE && compressor.status == COMPRESSOR_STATUS_WORK){
      compressor_work_timer_stop();
      compressor.status = COMPRESSOR_STATUS_WAIT;
      compressor_pwr_turn_off();
      compressor_wait_timer_start();
-     log_debug("温度:%d 低于关机温度.关压缩机.\r\n",t);
+     log_debug("温度:%d 低于关机温度.关闭压缩机.\r\n",t);
     }
     }
    /*释放mutex*/ 

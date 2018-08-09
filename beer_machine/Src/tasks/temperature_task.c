@@ -93,13 +93,13 @@ static uint8_t seek_idex(uint32_t r)
 }
 
 
-volatile float t_sensor_r;
+
 
 static uint32_t get_r(uint16_t adc)
 {
-
-  t_sensor_r = (TEMPERATURE_SENSOR_SUPPLY_VOLTAGE*TEMPERATURE_SENSOR_ADC_VALUE_MAX*TEMPERATURE_SENSOR_BYPASS_RES_VALUE)/(adc*TEMPERATURE_SENSOR_REFERENCE_VOLTAGE)-TEMPERATURE_SENSOR_BYPASS_RES_VALUE;
-  return (uint32_t)t_sensor_r;
+ float t_sensor_r;
+ t_sensor_r = (TEMPERATURE_SENSOR_SUPPLY_VOLTAGE*TEMPERATURE_SENSOR_ADC_VALUE_MAX*TEMPERATURE_SENSOR_BYPASS_RES_VALUE)/(adc*TEMPERATURE_SENSOR_REFERENCE_VOLTAGE)-TEMPERATURE_SENSOR_BYPASS_RES_VALUE;
+ return (uint32_t)t_sensor_r;
 }
 
 int16_t get_t(uint16_t adc)
@@ -123,7 +123,7 @@ void temperature_task(void const *argument)
 {
   uint16_t bypass_r_adc;
   uint32_t cur_time;
-  uint32_t delt_time;
+  uint32_t delta_time;
   int16_t  t;
   osEvent  os_msg;
   
@@ -140,7 +140,7 @@ void temperature_task(void const *argument)
   if(os_msg.status == osEventMessage){
   ptr_msg = (task_msg_t *)os_msg.value.v;
   cur_time = osKernelSysTick(); 
-  delt_time = cur_time-temperature.time;
+  delta_time = cur_time-temperature.time;
   
   /*温度ADC转换完成消息处理*/
   if(ptr_msg->type == T_ADC_COMPLETED){
@@ -159,7 +159,7 @@ void temperature_task(void const *argument)
    }else if(t > temperature.value && temperature.dir == T_DIR_UP    ||\
             t < temperature.value && temperature.dir == T_DIR_DOWN  ||\
             temperature.dir == T_DIR_INIT                           ||\
-            delt_time >= TEMPERATURE_TASK_T_HOLD_TIME ){         
+            delta_time >= TEMPERATURE_TASK_T_HOLD_TIME ){         
    temperature.dir = t > temperature.value?T_DIR_UP:T_DIR_DOWN;
    temperature.value = t;
    temperature.changed=TRUE;
@@ -168,7 +168,7 @@ void temperature_task(void const *argument)
    }
    
    if(temperature.changed == TRUE){
-   log_debug("teperature changed dir:%d value:%d C delt_time:%d.\r\n",temperature.dir,temperature.value,delt_time);
+   log_debug("teperature changed dir:%d value:%d C delta_time:%d ms.\r\n",temperature.dir,temperature.value,delta_time);
    temperature.changed=FALSE;
    
    a_msg.type = BROADCAST_TEMPERATURE_VALUE;
