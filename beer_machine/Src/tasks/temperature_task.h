@@ -23,7 +23,7 @@ void temperature_task(void const *argument);
 
 
 #define  TEMPERATURE_SENSOR_ADC_VALUE_MAX          4095/*温度AD转换最大数值*/      
-#define  TEMPERATURE_SENSOR_BYPASS_RES_VALUE       5100/*温度AD转换旁路电阻值*/  
+#define  TEMPERATURE_SENSOR_BYPASS_RES_VALUE       2000/*温度AD转换旁路电阻值*/  
 #define  TEMPERATURE_SENSOR_REFERENCE_VOLTAGE      3.3 /*温度传感器参考电压 单位:V*/
 #define  TEMPERATURE_SENSOR_SUPPLY_VOLTAGE         5.0 /*温度传感器供电电压 单位:V*/
 

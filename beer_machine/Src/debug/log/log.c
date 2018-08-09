@@ -19,7 +19,7 @@ log_debug("log init done.\r\n");
 
 uint16_t log_read(uint8_t *ptr_buffer,uint16_t buffer_size)
 {
-uint16_t read_cnt;
+uint16_t read_cnt=0;
 #if    LOG_USE_RTT > 0
 read_cnt = SEGGER_RTT_Read(0,ptr_buffer,buffer_size);
 #elif  LOG_USE_SERIAL > 0

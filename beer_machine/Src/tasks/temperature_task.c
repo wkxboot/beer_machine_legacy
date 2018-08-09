@@ -77,7 +77,7 @@ static uint8_t seek_idex(uint32_t r)
   mid = (low + high) / 2;  
   if(r > t_r_map[mid][1]){
     if(r <= t_r_map[mid-1][1]){
-    return mid ;
+    return mid - 1;
     } else{
     high = mid ;  
     }
@@ -93,11 +93,11 @@ static uint8_t seek_idex(uint32_t r)
 }
 
 
-
+volatile float t_sensor_r;
 
 static uint32_t get_r(uint16_t adc)
 {
-  float t_sensor_r;
+
   t_sensor_r = (TEMPERATURE_SENSOR_SUPPLY_VOLTAGE*TEMPERATURE_SENSOR_ADC_VALUE_MAX*TEMPERATURE_SENSOR_BYPASS_RES_VALUE)/(adc*TEMPERATURE_SENSOR_REFERENCE_VOLTAGE)-TEMPERATURE_SENSOR_BYPASS_RES_VALUE;
   return (uint32_t)t_sensor_r;
 }

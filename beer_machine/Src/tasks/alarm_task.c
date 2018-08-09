@@ -130,7 +130,7 @@ static void alarm_buzzer_pwr_turn_on()
 
 static void alarm_buzzer_pwr_turn_off()
 {
-  bsp_buzzer_ctrl_on();
+  bsp_buzzer_ctrl_off();
 }
 
 static void alarm_switch_timer_init()

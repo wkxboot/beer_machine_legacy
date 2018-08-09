@@ -55,12 +55,21 @@ static int adc_stop()
   
   return 0;
 }
+
+
+static void adc_calibration()
+{
+ HAL_ADCEx_Calibration_Start(&hadc1);
+}
+
 static void adc_reset()
 {
   HAL_ADC_MspDeInit(&hadc1);
   MX_ADC1_Init();
+  adc_stop();
+  adc_calibration();
+  adc_stop();
 }
-
 void adc_task(void const * argument)
 {
   osEvent signals;
@@ -71,6 +80,8 @@ void adc_task(void const * argument)
   /*等待任务同步*/
   xEventGroupSync(tasks_sync_evt_group_hdl,TASKS_SYNC_EVENT_ADC_TASK_RDY,TASKS_SYNC_EVENT_ALL_TASKS_RDY,osWaitForever);
   log_debug("adc task sync ok.\r\n");
+  adc_stop();
+  adc_calibration();
   adc_stop();
   while(1){
   osDelay(ADC_TASK_INTERVAL);
@@ -95,6 +106,7 @@ void adc_task(void const * argument)
     
          if(t_sample_err_cnt >= ADC_TASK_ADC_ERR_MAX){
          log_error("temperature sample error.\r\n");
+         t_sample_err_cnt=0;
          t_msg.type=T_ADC_COMPLETED;
          t_msg.adc=ADC_TASK_ADC_ERR_VALUE;         
          status = osMessagePut(temperature_task_msg_q_id,(uint32_t)&t_msg,ADC_TASK_PUT_MSG_TIMEOUT);
@@ -130,6 +142,7 @@ void adc_task(void const * argument)
          
          if(p_sample_err_cnt >= ADC_TASK_ADC_ERR_MAX){
          log_error("pressure  sample error.\r\n");
+         p_sample_err_cnt=0;
          p_msg.type=P_ADC_COMPLETED;
          p_msg.adc=ADC_TASK_ADC_ERR_VALUE; 
          status = osMessagePut(pressure_task_msg_q_id,(uint32_t)&p_msg,ADC_TASK_PUT_MSG_TIMEOUT);    
