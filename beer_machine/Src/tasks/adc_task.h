@@ -18,14 +18,14 @@ extern osThreadId   adc_task_hdl;
 void adc_task(void const * argument);
 
 
-#define  ADC_TASK_ADC_VALUE_MAX                (4095)
-#define  ADC_TASK_ADC_VALUE_MIN                (0)
+#define  ADC_TASK_ADC_VALUE_MAX                (4090)
+#define  ADC_TASK_ADC_VALUE_MIN                (5)
 
 #define  ADC_TASK_ADC_ERR_MAX                  (100)   /*ADC取样错误最大次数*/  
 #define  ADC_TASK_ADC_ERR_VALUE                (0xFFFF)/*ADC取样错误值*/
 
 
-#define  ADC_TASK_ADC_SAMPLE_MAX               48/*ADC取样次数*/
+#define  ADC_TASK_ADC_SAMPLE_MAX               50/*ADC取样次数*/
 #define  ADC_TASK_TEMPERATURE_IDX              1 /*温度取样序号*/
 #define  ADC_TASK_PRESSURE_IDX                 0 /*压力取样序号*/
 

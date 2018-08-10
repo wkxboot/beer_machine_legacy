@@ -223,7 +223,7 @@ uint8_t bit_update;
 uint8_t buffer_addr;
 
 bit_update=addr & 0x07;
-buffer_addr=addr & 0x01;
+buffer_addr=addr > 7 ? 1:0;
 
 for(bit_pos=0;bit_pos<8;bit_pos++){
  if(bits_flag & (1<<bit_pos)){

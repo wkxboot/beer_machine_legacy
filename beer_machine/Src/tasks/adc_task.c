@@ -97,8 +97,8 @@ void adc_task(void const * argument)
     
 /*temperature adc calculate*/    
     if(t_sample_cnt < ADC_TASK_ADC_SAMPLE_MAX){
-      if(adc_sample[ADC_TASK_TEMPERATURE_IDX] == ADC_TASK_ADC_VALUE_MIN ||\
-         adc_sample[ADC_TASK_TEMPERATURE_IDX] == ADC_TASK_ADC_VALUE_MAX){
+      if(adc_sample[ADC_TASK_TEMPERATURE_IDX] <= ADC_TASK_ADC_VALUE_MIN ||\
+         adc_sample[ADC_TASK_TEMPERATURE_IDX] >= ADC_TASK_ADC_VALUE_MAX){
            
          adc_cusum[ADC_TASK_TEMPERATURE_IDX]=0;
          t_sample_cnt=0;
@@ -133,8 +133,8 @@ void adc_task(void const * argument)
     
    /*pressure adc calculate*/ 
      if(p_sample_cnt < ADC_TASK_ADC_SAMPLE_MAX){
-      if(adc_sample[ADC_TASK_PRESSURE_IDX] == ADC_TASK_ADC_VALUE_MIN ||\
-         adc_sample[ADC_TASK_PRESSURE_IDX] == ADC_TASK_ADC_VALUE_MAX){
+      if(adc_sample[ADC_TASK_PRESSURE_IDX] <= ADC_TASK_ADC_VALUE_MIN ||\
+         adc_sample[ADC_TASK_PRESSURE_IDX] >= ADC_TASK_ADC_VALUE_MAX){
            
          adc_cusum[ADC_TASK_PRESSURE_IDX]=0;
          p_sample_cnt=0;

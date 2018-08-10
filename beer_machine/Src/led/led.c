@@ -92,22 +92,19 @@ static uint8_t const hex_code[]=
 /*0    1     2   3    4    5    6   7 */ 
 0xfc,0x60,0xda,0xf2,0x66,0xb6,0xbe,0xe0,
 /*8    9     A   b    C    d    E   F */
-0xfe,0xf6,0xee,0x3e,0x9c,0x7a,0x9e,0x8e
+0xfe,0xf6,0xee,0x3e,0x9c,0x7a,0x9e,0x8e,
 };
 
+static uint8_t const null_code    =0x00;
 static uint8_t const negative_code=0x02;
-static uint8_t const point_code=0x01;
+static uint8_t const point_code   =0x01;
 
-#define  LED_DISPLAY_ON              1
-#define  LED_DISPLAY_OFF             0
 
-#define  LED_BRIGHTNESS_DEFAULT      7
 
 
 /*显示初始化*/
 void led_display_init()
 {
- uint8_t dis;
  int result;
  result =tm1629a_register_hal_driver(&hal_driver);
  log_assert(result == 0);
@@ -123,19 +120,17 @@ void led_display_init()
  
  led_display_temperature_icon(LED_DISPLAY_ON);
  led_display_pressure_icon(LED_DISPLAY_ON);
- led_display_capacity_icon(LED_DISPLAY_ON);
+ led_display_capacity_icon_frame(LED_DISPLAY_ON);
  
  led_display_pressure_point(LED_DISPLAY_ON);
- led_display_capacity_icon_frame(LED_DISPLAY_ON);
- /*依次显示 8-7....0.*/
- for(dis=8;dis > 0;dis--){
- led_display_temperature(dis);
- led_display_pressure(dis);
- led_display_capacity(dis);
- }
+ led_display_capacity_icon_level(5);
+ 
+
+ led_display_wifi_icon(LED_DISPLAY_ON);
+ led_display_circle_icon(LED_DISPLAY_ON);
+ led_display_brand_icon(LED_DISPLAY_ON);
  
  log_debug("led display init done.\r\n");
- 
 }
 /*显示刷新到芯片*/
 void led_display_refresh()
@@ -171,11 +166,13 @@ void led_display_temperature_icon(uint8_t on_off)
 void led_display_temperature(int16_t t)
 {
 uint8_t dis[2];
-if(t < 0){
+if(t == LED_NULL_VALUE){
+ dis[0]=null_code;
+ dis[1]=null_code;  
+}else if(t < 0){
  dis[0]=negative_code;
  t*=-1;
  dis[1]=hex_code[t];
- 
 }else{
 dis[0]=hex_code[t/10];
 dis[1]=hex_code[t%10];
@@ -221,9 +218,13 @@ void led_display_pressure_point(uint8_t on_off)
 void led_display_pressure(uint8_t p)
 {
 uint8_t dis[2]; 
-
+if(p == LED_NULL_VALUE){
+ dis[0]=null_code;
+ dis[1]=null_code;  
+}else {
 dis[0]=hex_code[p/10];
 dis[1]=hex_code[p%10];
+}
 tm1629a_buffer_update(LED_P_HI_POS,dis[0],LED_ABCDEFG_BITS);
 tm1629a_buffer_update(LED_P_LO_POS,dis[1],LED_ABCDEFG_BITS);
 
@@ -233,18 +234,20 @@ tm1629a_buffer_update(LED_P_LO_POS,dis[1],LED_ABCDEFG_BITS);
 void led_display_capacity_icon_frame(uint8_t on_off)
 {
  if(on_off > 0 ){
-  tm1629a_buffer_update(LED_P_DP_POS,point_code,LED_P_DP_BITS); 
+  tm1629a_buffer_update(LED_C_ICON_FRAME_1_POS,LED_C_ICON_FRAME_1_BITS,LED_C_ICON_FRAME_1_BITS); 
+  tm1629a_buffer_update(LED_C_ICON_FRAME_2_POS,LED_C_ICON_FRAME_2_BITS,LED_C_ICON_FRAME_2_BITS); 
  }else{
-  tm1629a_buffer_update(LED_P_DP_POS,0,LED_P_DP_BITS); 
- }  
+  tm1629a_buffer_update(LED_C_ICON_FRAME_1_POS,0,LED_C_ICON_FRAME_1_BITS); 
+  tm1629a_buffer_update(LED_C_ICON_FRAME_2_POS,0,LED_C_ICON_FRAME_2_BITS); 
+ }
   
 }
-/*容积图标1-5*/
-void led_display_capacity_icon(uint8_t on_off)
+/*容积图标等级1-5*/
+void led_display_capacity_icon_level(uint8_t level)
 {
  uint8_t bits12,bits35;
 
- switch(on_off)
+ switch(level)
  {
  case 0:
    bits12=0;
@@ -266,7 +269,7 @@ void led_display_capacity_icon(uint8_t on_off)
    bits35=LED_C_ICON_LEVEL_4_BITS|LED_C_ICON_LEVEL_3_BITS;
    break;
  case 5:
-   bits12=LED_C_ICON_LEVEL_3_BITS;
+   bits12=LED_C_ICON_LEVEL_2_BITS|LED_C_ICON_LEVEL_1_BITS;
    bits35=LED_C_ICON_LEVEL_5_BITS|LED_C_ICON_LEVEL_4_BITS|LED_C_ICON_LEVEL_3_BITS;;
  default:
    break;
@@ -278,11 +281,9 @@ void led_display_capacity_icon(uint8_t on_off)
 void led_display_capacity_unit(uint8_t on_off)
 {
  if(on_off > 0 ){
-  tm1629a_buffer_update(LED_C_ICON_FRAME_1_POS,LED_C_ICON_FRAME_1_BITS,LED_C_ICON_FRAME_1_BITS); 
-  tm1629a_buffer_update(LED_C_ICON_FRAME_2_POS,LED_C_ICON_FRAME_2_BITS,LED_C_ICON_FRAME_2_BITS); 
+  tm1629a_buffer_update(LED_C_UNIT_POS,LED_C_UNIT_BITS,LED_C_UNIT_BITS); 
  }else{
-  tm1629a_buffer_update(LED_C_ICON_FRAME_1_POS,0,LED_C_ICON_FRAME_1_BITS); 
-  tm1629a_buffer_update(LED_C_ICON_FRAME_2_POS,0,LED_C_ICON_FRAME_2_BITS); 
+  tm1629a_buffer_update(LED_C_UNIT_POS,0,LED_C_UNIT_BITS); 
  }
 }
 
@@ -290,13 +291,46 @@ void led_display_capacity_unit(uint8_t on_off)
 void led_display_capacity(uint8_t c)
 {
 uint8_t dis[2]; 
-
+if(c == LED_NULL_VALUE){
+ dis[0]=null_code;
+ dis[1]=null_code;  
+}else {
 dis[0]=hex_code[c/10];
 dis[1]=hex_code[c%10];
+}
 tm1629a_buffer_update(LED_C_HI_POS,dis[0],LED_ABCDEFG_BITS);
 tm1629a_buffer_update(LED_C_LO_POS,dis[1],LED_ABCDEFG_BITS);
 }
 
+/*WIFI图标*/
+void led_display_wifi_icon(uint8_t on_off)
+{
+  if(on_off > 0 ){
+  tm1629a_buffer_update(LED_WIFI_ICON_POS,LED_WIFI_ICON_BITS,LED_WIFI_ICON_BITS); 
+ }else{
+  tm1629a_buffer_update(LED_WIFI_ICON_POS,0,LED_WIFI_ICON_BITS); 
+ }
+}
+
+/*循环图标*/
+void led_display_circle_icon(uint8_t on_off)
+{
+  if(on_off > 0 ){
+  tm1629a_buffer_update(LED_CIRCLE_ICON_POS,LED_CIRCLE_ICON_BITS,LED_CIRCLE_ICON_BITS); 
+ }else{
+  tm1629a_buffer_update(LED_CIRCLE_ICON_POS,0,LED_CIRCLE_ICON_BITS); 
+ }
+}
+
+/*商标图标*/
+void led_display_brand_icon(uint8_t on_off)
+{
+  if(on_off > 0 ){
+  tm1629a_buffer_update(LED_BRAND_ICON_POS,LED_BRAND_ICON_BITS,LED_BRAND_ICON_BITS); 
+ }else{
+  tm1629a_buffer_update(LED_BRAND_ICON_POS,0,LED_BRAND_ICON_BITS); 
+ }
+}
 
 
 

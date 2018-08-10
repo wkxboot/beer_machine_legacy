@@ -15,6 +15,14 @@
 
 LED_BEGIN
 
+
+#define  LED_DISPLAY_ON              1
+#define  LED_DISPLAY_OFF             0
+
+#define  LED_BRIGHTNESS_DEFAULT      7
+#define  LED_NULL_VALUE              0xFF
+
+
 /*显示初始化*/
 void led_display_init();
 /*显示刷新到芯片*/
@@ -38,12 +46,17 @@ void led_display_pressure(uint8_t p);
 /*容积图标框架*/
 void led_display_capacity_icon_frame(uint8_t on_off);
 /*容积图标1-5*/
-void led_display_capacity_icon(uint8_t on_off);
+void led_display_capacity_icon_level(uint8_t level);
 /*容积单位*/
 void led_display_capacity_unit(uint8_t on_off);
 /*容积数值*/
 void led_display_capacity(uint8_t c);
-
+/*WIFI图标*/
+void led_display_wifi_icon(uint8_t on_off);
+/*循环图标*/
+void led_display_circle_icon(uint8_t on_off);
+/*商标图标*/
+void led_display_brand_icon(uint8_t on_off);
 
 
 

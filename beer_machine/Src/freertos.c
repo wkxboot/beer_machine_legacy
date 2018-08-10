@@ -62,6 +62,7 @@
 #include "display_task.h"
 #include "temperature_task.h"
 #include "pressure_task.h"
+#include "led.h"
 #include "log.h"
 #define  LOG_MODULE_LEVEL    LOG_LEVEL_DEBUG
 #define  LOG_MODULE_NAME     "[main]"
@@ -254,7 +255,10 @@ void StartDefaultTask(void const * argument)
       log_debug("r[%d]=%d.\r\n",i,r_eeprom[i]);
       }
       break;
-      
+      case 'b':
+      led_display_brightness(debug[1]-'0');
+      log_debug("brightness:%d.\r\n",debug[1]-'0');
+      break;
       default:
       break;
       }

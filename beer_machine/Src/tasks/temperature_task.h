@@ -32,11 +32,11 @@ void temperature_task(void const *argument);
 #define  TEMPERATURE_TASK_PUT_MSG_TIMEOUT          5  /*发送消息超时时间*/
 
 #define  TR_MAP_IDX_MIN                            2  /*显示最小值t_r_map[2 ][1] r=10920 -10摄氏度*/ 
-#define  TR_MAP_IDX_MAX                            62 /*显示最大值t_r_map[62][1] r=7251   50摄氏度*/ 
+#define  TR_MAP_IDX_MAX                            51 /*显示最大值t_r_map[51][1] r=1115   39摄氏度*/ 
 
-#define  TEMPERATURE_ERR_VALUE_OVER_HIGH           0xe0/*温度显示过高错误代码*/
-#define  TEMPERATURE_ERR_VALUE_OVER_LOW            0xe1/*温度显示过低错误代码*/
-#define  TEMPERATURE_ERR_VALUE_SENSOR              0xe2/*温度显示传感器错误代码*/
+#define  TEMPERATURE_ERR_VALUE_OVER_HIGH           (0xe * 10 + 0)/*温度显示过高错误代码   e0*/
+#define  TEMPERATURE_ERR_VALUE_OVER_LOW            (0xe * 10 + 1)/*温度显示过低错误代码   e1*/
+#define  TEMPERATURE_ERR_VALUE_SENSOR              (0xe * 10 + 2)/*温度显示传感器错误代码 e2*/
 
 TEMPERATURE_TASK_END
 

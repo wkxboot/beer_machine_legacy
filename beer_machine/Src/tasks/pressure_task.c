@@ -34,7 +34,7 @@ uint32_t          time;
 
 
 static pressure_t   pressure={
-.value = 0,
+.value = 99,
 .dir   = P_DIR_INIT,
 .time  =0
 };

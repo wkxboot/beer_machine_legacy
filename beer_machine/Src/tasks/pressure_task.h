@@ -34,7 +34,7 @@ void pressure_task(void const *argument);
 
 
 
-#define  PRESSURE_TASK_P_HOLD_TIME                 8000/*压力显示保持时间 单位:ms*/
+#define  PRESSURE_TASK_P_HOLD_TIME                 1000/*压力显示保持时间 单位:ms*/
 #define  PRESSURE_SENSOR_ADC_VALUE_MAX             4095/*AD转换最大数值*/    
 
 
@@ -42,9 +42,9 @@ void pressure_task(void const *argument);
 #define  PRESSURE_TASK_MSG_WAIT_TIMEOUT            osWaitForever
 #define  PRESSURE_TASK_PUT_MSG_TIMEOUT             5
 
-#define  PRESSURE_ERR_VALUE_OVER_HIGH              0xe3/*压力显示过载错误代码*/
-#define  PRESSURE_ERR_VALUE_OVER_LOW               0xe4/*压力显示低载错误代码*/
-#define  PRESSURE_ERR_VALUE_SENSOR                 0xe5/*压力显示AD传感器错误代码*/
+#define  PRESSURE_ERR_VALUE_OVER_HIGH              (0xe * 10 + 3)/*压力显示过载错误代码    e3*/
+#define  PRESSURE_ERR_VALUE_OVER_LOW               (0xe * 10 + 4)/*压力显示低载错误代码    e4*/
+#define  PRESSURE_ERR_VALUE_SENSOR                 (0xe * 10 + 5)/*压力显示AD传感器错误代码e5*/
 
 PRESSURE_TASK_END
 
