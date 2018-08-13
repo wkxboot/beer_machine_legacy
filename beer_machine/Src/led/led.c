@@ -51,8 +51,8 @@ tm1629a_hal_driver_t hal_driver={
 #define  LED_WIFI_ICON_BITS         (1<<6)
 
 #define  LED_CIRCLE_ICON_POS        8
-#define  LED_CIRCLE_ICON_BITS       (1<<5)|(1<<4)
-
+#define  LED_CIRCLE_ICON_UP_BITS    (1<<4)
+#define  LED_CIRCLE_ICON_DWN_BITS   (1<<5)
 
 #define  LED_BRAND_ICON_POS         8
 #define  LED_BRAND_ICON_BITS        (1<<3)|(1<<2)|(1<<1)
@@ -113,22 +113,6 @@ void led_display_init()
  tm1629a_buffer_clean();
  
  led_display_brightness(LED_BRIGHTNESS_DEFAULT);
- 
- led_display_temperature_unit(LED_DISPLAY_ON);
- led_display_pressure_unit(LED_DISPLAY_ON);
- led_display_capacity_unit(LED_DISPLAY_ON);
- 
- led_display_temperature_icon(LED_DISPLAY_ON);
- led_display_pressure_icon(LED_DISPLAY_ON);
- led_display_capacity_icon_frame(LED_DISPLAY_ON);
- 
- led_display_pressure_point(LED_DISPLAY_ON);
- led_display_capacity_icon_level(5);
- 
-
- led_display_wifi_icon(LED_DISPLAY_ON);
- led_display_circle_icon(LED_DISPLAY_ON);
- led_display_brand_icon(LED_DISPLAY_ON);
  
  log_debug("led display init done.\r\n");
 }
@@ -313,13 +297,20 @@ void led_display_wifi_icon(uint8_t on_off)
 }
 
 /*循环图标*/
-void led_display_circle_icon(uint8_t on_off)
+void led_display_circle_icon(uint8_t on_off_up,uint8_t on_off_dwn)
 {
-  if(on_off > 0 ){
-  tm1629a_buffer_update(LED_CIRCLE_ICON_POS,LED_CIRCLE_ICON_BITS,LED_CIRCLE_ICON_BITS); 
+  if(on_off_up > 0 ){
+  tm1629a_buffer_update(LED_CIRCLE_ICON_POS,LED_CIRCLE_ICON_UP_BITS,LED_CIRCLE_ICON_UP_BITS); 
  }else{
-  tm1629a_buffer_update(LED_CIRCLE_ICON_POS,0,LED_CIRCLE_ICON_BITS); 
+  tm1629a_buffer_update(LED_CIRCLE_ICON_POS,0,LED_CIRCLE_ICON_UP_BITS); 
  }
+ 
+ if(on_off_dwn > 0 ){
+  tm1629a_buffer_update(LED_CIRCLE_ICON_POS,LED_CIRCLE_ICON_DWN_BITS,LED_CIRCLE_ICON_DWN_BITS); 
+ }else{
+  tm1629a_buffer_update(LED_CIRCLE_ICON_POS,0,LED_CIRCLE_ICON_DWN_BITS); 
+ }
+ 
 }
 
 /*商标图标*/

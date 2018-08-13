@@ -201,7 +201,7 @@ void MX_FREERTOS_Init(void) {
   compressor_task_hdl = osThreadCreate(osThread(compressor_task), NULL);
   
     /* alarm_task */
-  osThreadDef(alarm_task, alarm_task, osPriorityNormal, 0, 128);
+  osThreadDef(alarm_task, alarm_task, osPriorityNormal, 0, 144);
   alarm_task_hdl = osThreadCreate(osThread(alarm_task), NULL);
   
     /* display_task */

@@ -54,7 +54,7 @@ void led_display_capacity(uint8_t c);
 /*WIFI图标*/
 void led_display_wifi_icon(uint8_t on_off);
 /*循环图标*/
-void led_display_circle_icon(uint8_t on_off);
+void led_display_circle_icon(uint8_t on_off_up,uint8_t on_off_dwn);
 /*商标图标*/
 void led_display_brand_icon(uint8_t on_off);
 

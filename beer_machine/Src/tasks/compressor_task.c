@@ -2,6 +2,7 @@
 #include "tasks_init.h"
 #include "compressor_task.h"
 #include "temperature_task.h"
+#include "display_task.h"
 #include "beer_machine.h"
 #include "log.h"
 #define  LOG_MODULE_LEVEL    LOG_LEVEL_DEBUG
@@ -16,6 +17,7 @@ osTimerId    compressor_wait_timer_id;
 osTimerId    compressor_rest_timer_id;
 
 static task_msg_t  t_msg;
+static task_msg_t  d_msg;;
 static task_msg_t  *ptr_msg;
 
 typedef enum
@@ -175,10 +177,19 @@ static void compressor_rest_timer_expired(void const *argument)
 static void compressor_pwr_turn_on()
 {
  bsp_compressor_ctrl_on(); 
+ d_msg.type = COMPRESSOR_START;
+ osMessagePut(display_task_msg_q_id,(uint32_t)&d_msg,COMPRESSOR_TASK_PUT_MSG_TIMEOUT);
 }
+static void compressor_pwr_turn_off_pre()
+{
+ bsp_compressor_ctrl_off();  
+}
+
 static void compressor_pwr_turn_off()
 {
  bsp_compressor_ctrl_off();  
+ d_msg.type = COMPRESSOR_STOP;
+ osMessagePut(display_task_msg_q_id,(uint32_t)&d_msg,COMPRESSOR_TASK_PUT_MSG_TIMEOUT);
 }
 
 /*需要请求当前温度值，以判断是否需要控制压缩机*/
@@ -208,7 +219,7 @@ void compressor_task(void const *argument)
   compressor_task_msg_q_id = osMessageCreate(osMessageQ(compressor_msg_q),compressor_task_hdl);
   log_assert(compressor_task_msg_q_id);
   /*开机先关闭压缩机*/
-  compressor_pwr_turn_off();
+  compressor_pwr_turn_off_pre();
   /*等待任务同步*/
   xEventGroupSync(tasks_sync_evt_group_hdl,TASKS_SYNC_EVENT_COMPRESSOR_TASK_RDY,TASKS_SYNC_EVENT_ALL_TASKS_RDY,osWaitForever);
   log_debug("compressor task sync ok.\r\n");

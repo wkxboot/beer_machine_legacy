@@ -22,10 +22,10 @@ void display_task(void const *argument);
 #define  DISPLAY_TASK_MSG_WAIT_TIMEOUT         osWaitForever
 #define  DISPLAY_TASK_PUT_MSG_TIMEOUT          5
 
-#define  DISPLAY_TASK_FLASH_TIMEOUT            400
 
-
-
+#define  DISPLAY_TASK_TIMER_TIMEOUT            100
+#define  FLASH_DISPLAY_ON_TIMEOUT              400
+#define  FLASH_DISPLAY_OFF_TIMEOUT             400
 
 
 
