@@ -50,8 +50,10 @@ static uint8_t get_pressure(uint16_t adc)
  p=(v-PRESSURE_SENSOR_OUTPUT_VOLTAGE_MIN)*(PRESSURE_SENSOR_INPUT_PA_MAX -PRESSURE_SENSOR_INPUT_PA_MIN)/(PRESSURE_SENSOR_OUTPUT_VOLTAGE_MAX - PRESSURE_SENSOR_OUTPUT_VOLTAGE_MIN)+PRESSURE_SENSOR_INPUT_PA_MIN;
  p=(p*10)/PA_VALUE_PER_1KG_CM2;
 
- log_one_line("v:%d mv   p:%d kg/cm2.",(uint16_t)(v*1000),(uint32_t)p);
- if(p < PRESSURE_VALUE_IN_KG_CM2_MIN ){
+ log_one_line("v:%d mv   p:%d kg/cm2.",(uint16_t)(v*1000),(int32_t)p);
+ if(p < 0 && p >= PRESSURE_VALUE_IN_KG_CM2_MIN){
+  return 0;
+ }else if(p < PRESSURE_VALUE_IN_KG_CM2_MIN ){
  log_error("pressure over low.\r\n");
  return  PRESSURE_ERR_VALUE_OVER_LOW;
  }else if(p > PRESSURE_VALUE_IN_KG_CM2_MAX){
