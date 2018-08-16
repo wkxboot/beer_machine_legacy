@@ -1,7 +1,6 @@
 /beer_machine/EWARM/*
 !/beer_machine/EWARM/beer_machine.ewp
 !/beer_machine/EWARM/beer_machine.ewd
-!/beer_machine/EWARM/beer_machine.dep
 !/beer_machine/EWARM/Project.eww
 !/beer_machine/EWARM/startup_stm32f103xb.s
 !/beer_machine/EWARM/stm32f103xb_flash.icf
