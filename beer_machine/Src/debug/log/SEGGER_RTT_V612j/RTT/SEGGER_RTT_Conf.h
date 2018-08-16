@@ -81,7 +81,7 @@ Revision: $Rev: 5496 $
 #define SEGGER_RTT_MAX_NUM_UP_BUFFERS             (3)     // Max. number of up-buffers (T->H) available on this target    (Default: 3)
 #define SEGGER_RTT_MAX_NUM_DOWN_BUFFERS           (3)     // Max. number of down-buffers (H->T) available on this target  (Default: 3)
 
-#define BUFFER_SIZE_UP                            (1024)  // Size of the buffer for terminal output of target, up to host (Default: 1k)
+#define BUFFER_SIZE_UP                            (512)  // Size of the buffer for terminal output of target, up to host (Default: 1k)
 #define BUFFER_SIZE_DOWN                          (64)    // Size of the buffer for terminal input to target from host (Usually keyboard input) (Default: 16)
 
 #define SEGGER_RTT_PRINTF_BUFFER_SIZE             (128)    // Size of buffer for RTT printf to bulk-send chars via RTT     (Default: 64)
@@ -103,7 +103,7 @@ Revision: $Rev: 5496 $
 // or define SEGGER_RTT_LOCK() to completely disable interrupts.
 //
 
-#define SEGGER_RTT_MAX_INTERRUPT_PRIORITY         (3<<(8-2))   // Interrupt priority to lock on SEGGER_RTT_LOCK on Cortex-M3/4 (Default: 0x20)
+#define SEGGER_RTT_MAX_INTERRUPT_PRIORITY           (5<<(8-4))   // Interrupt priority to lock on SEGGER_RTT_LOCK on Cortex-M3/4 (Default: 0x50)
 
 /*********************************************************************
 *

@@ -23,19 +23,14 @@ extern "C" {
 #define LOG_USE_TIMESTAMP      1   
 
 /*******配置结束******************************/
-
-
 #if  LOG_USE_RTT > 0
 #include "SEGGER_RTT.h"
+
 #endif
 #if  LOG_USE_SERIAL > 0
-#include "stdio.h"
-void log_serial_init();
-uint16_t log_serial_read(uint8_t *ptr_buffer,uint16_t buffer_size);
+#include "log_serial.h"
+
 #endif
-
-
-
 
 void log_init(void);
 uint16_t log_read(uint8_t *buffer,uint16_t buffer_size);
@@ -96,7 +91,7 @@ SEGGER_RTT_printf(0,format,##arg);     \
 #if  LOG_USE_SERIAL > 0                
 #define  SERIAL_LOG_OUT(format,arg...) \
 {                                      \
-printf(format,##arg);                  \
+log_serial_printf(format,##arg);       \
 }
 #else
 #define  SERIAL_LOG_OUT(format,arg...) 

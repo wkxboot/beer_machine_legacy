@@ -96,8 +96,9 @@ static void display_timer_expired(void const *argument)
 
 void display_task(void const *argument)
 {
-  osEvent os_msg;
-  
+ osEvent os_msg
+ /*等待显示芯片上电稳定*/;
+ osDelay(200);
  led_display_init();
  
  led_display_temperature_unit(LED_DISPLAY_ON);

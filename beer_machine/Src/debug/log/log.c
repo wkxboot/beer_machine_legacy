@@ -3,7 +3,6 @@
 #define  LOG_MODULE_NAME     "[log]"
 
 
-
 void log_init(void)
 {
 #if LOG_USE_RTT > 0
@@ -17,13 +16,14 @@ log_serial_init();
 log_debug("log init done.\r\n");
 }
 
-uint16_t log_read(uint8_t *ptr_buffer,uint16_t buffer_size)
+
+uint16_t log_read(uint8_t *pbuffer,uint16_t size)
 {
-uint16_t read_cnt=0;
+uint16_t read_cnt;
 #if    LOG_USE_RTT > 0
-read_cnt = SEGGER_RTT_Read(0,ptr_buffer,buffer_size);
+read_cnt = SEGGER_RTT_Read(0,pbuffer,size);
 #elif  LOG_USE_SERIAL > 0
-read_cnt = log_serial_read(ptr_buffer,buffer_size);
+read_cnt = log_serial_read(pbuffer,size);
 #endif
 return read_cnt;
 }
