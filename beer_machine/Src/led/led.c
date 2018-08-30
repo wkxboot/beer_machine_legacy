@@ -13,77 +13,81 @@ tm1629a_hal_driver_t hal_driver={
 .stb_clr = bsp_tm1629a_cs_ctrl_clr
 };
 
-#define  LED_ABCDEFG_BITS          (0xfe)
+#define  LED_ABCDEFG_BITS            (1<<7|1<<6|1<<5|1<<4|1<<3|1<<2|1<<1)          
 
 
-#define  LED_P_HI_POS              15
-#define  LED_P_LO_POS              14
-#define  LED_T_HI_POS              13
-#define  LED_T_LO_POS              12
-#define  LED_C_HI_POS              11
-#define  LED_C_LO_POS              10
+#define  LED_P_HI_POS                 15
+#define  LED_P_LO_POS                 14
+#define  LED_T_HI_POS                 13
+#define  LED_T_LO_POS                 12
+#define  LED_C_HI_POS                 11
+#define  LED_C_LO_POS                 10
 
 
-#define  LED_P_DP_POS              15
-#define  LED_P_DP_BITS             (1<<0)
+#define  LED_P_DP_POS                 15
+#define  LED_P_DP_BITS               (1<<0)
 
-#define  LED_P_UNIT_L_POS          14
-#define  LED_P_UNIT_L_BITS         (1<<0)
-
-#define  LED_P_UNIT_R_POS          13
-#define  LED_P_UNIT_R_BITS         (1<<0)
-
-#define  LED_T_UNIT_POS            12
-#define  LED_T_UNIT_BITS           (1<<0)
+#define  LED_P_UNIT_POS               7
+#define  LED_P_UNIT_BITS             (1<<7 |1<<6)
 
 
-
-#define  LED_P_ICON_POS             9
-#define  LED_P_ICON_BITS           (1<<7)|(1<<6)|(1<<5)|(1<<4)          
-
-#define  LED_T_ICON_POS             9
-#define  LED_T_ICON_BITS           (1<<3)|(1<<2)|(1<<1)|(1<<0)    
-
-#define  LED_RESERVED_POS           8
-#define  LED_RESERVED_BITS          (1<<7)
-
-#define  LED_WIFI_ICON_POS          8
-#define  LED_WIFI_ICON_BITS         (1<<6)
-
-#define  LED_CIRCLE_ICON_POS        8
-#define  LED_CIRCLE_ICON_UP_BITS    (1<<4)
-#define  LED_CIRCLE_ICON_DWN_BITS   (1<<5)
-
-#define  LED_BRAND_ICON_POS         8
-#define  LED_BRAND_ICON_BITS        (1<<3)|(1<<2)|(1<<1)
-
-#define  LED_C_UNIT_POS             7
-#define  LED_C_UNIT_BITS            (1<<7)|(1<<6)
-
-#define  LED_C_ICON_LEVEL_3_5_POS   7
-
-#define  LED_C_ICON_LEVEL_5_BITS    (1<<5)|(1<<4)
-#define  LED_C_ICON_LEVEL_4_BITS    (1<<3)|(1<<2)
-#define  LED_C_ICON_LEVEL_3_BITS    (1<<1)|(1<<0)
+#define  LED_P_ICON_POS               9
+#define  LED_P_ICON_BITS             (1<<7|1<<6|1<<5|1<<4|1<<3|1<<2|1<<1)          
 
 
-#define  LED_C_ICON_LEVEL_1_2_POS   6
-
-#define  LED_C_ICON_LEVEL_2_BITS    (1<<7)|(1<<6)
-#define  LED_C_ICON_LEVEL_1_BITS    (1<<5)|(1<<4)
+#define  LED_T_UNIT_POS               6
+#define  LED_T_UNIT_BITS             (1<<0 |1<<1 |1<<2)
 
 
-#define  LED_C_ICON_FRAME_1_POS      6
-#define  LED_C_ICON_FRAME_1_BITS    (1<<3)|(1<<2)|(1<<1)|(1<<0)
-
-#define  LED_C_ICON_FRAME_2_POS      5
-#define  LED_C_ICON_FRAME_2_BITS    (0xff)
-
+#define  LED_T_ICON1_POS              9
+#define  LED_T_ICON1_BITS            (1<<0)  
+#define  LED_T_ICON2_POS              8
+#define  LED_T_ICON2_BITS            (1<<7|1<<6|1<<5|1<<4|1<<3|1<<2|1<<1|1<<0)    
 
 
+#define  LED_RESERVED_POS             8
+#define  LED_RESERVED_BITS           (1<<7)
 
-#define  TEMPERATURE_DATA_POS       1
-#define  TEMPERATURE_DATA_CNT       2
+#define  LED_WIFI_ICON_POS            7
+#define  LED_WIFI_ICON_BITS          (1<<5|1<<4|1<<3)
+
+#define  LED_CIRCLE_ICON_POS          7
+#define  LED_CIRCLE_ICON_BITS        (1<<2|1<<1)
+
+#define  LED_BRAND_ICON1_POS          7
+#define  LED_BRAND_ICON1_BITS        (1<<0)
+#define  LED_BRAND_ICON2_POS          6
+#define  LED_BRAND_ICON2_BITS        (1<<7|1<<6|1<<5|1<<4|1<<3)
+
+
+#define  LED_C_UNIT_POS               5
+#define  LED_C_UNIT_BITS             (1<<7|1<<6|1<<5)
+
+
+#define  LED_C_ICON_FRAME1_POS        5
+#define  LED_C_ICON_FRAME1_BITS      (1<<4|1<<3|1<<2|1<<1|1<<0)
+#define  LED_C_ICON_FRAME2_POS        4
+#define  LED_C_ICON_FRAME2_BITS      (1<<7|1<<6|1<<5|1<<4|1<<3)
+
+
+#define  LED_C_ICON_LEVEL5_POS        4
+#define  LED_C_ICON_LEVEL5_BITS      (1<<2|1<<1)
+
+#define  LED_C_ICON_LEVEL4L_POS       4
+#define  LED_C_ICON_LEVEL4L_BITS     (1<<0)
+#define  LED_C_ICON_LEVEL4R_POS       3
+#define  LED_C_ICON_LEVEL4R_BITS     (1<<7)
+
+#define  LED_C_ICON_LEVEL3_1POS       3
+#define  LED_C_ICON_LEVEL3_BITS      (1<<6|1<<5)
+#define  LED_C_ICON_LEVEL2_BITS      (1<<4|1<<3)
+#define  LED_C_ICON_LEVEL1_BITS      (1<<2|1<<1)
+
+
+
+
+#define  TEMPERATURE_DATA_POS        1
+#define  TEMPERATURE_DATA_CNT        2
 
 
 static uint8_t const hex_code[]=
@@ -140,9 +144,11 @@ void led_display_temperature_unit(uint8_t on_off)
 void led_display_temperature_icon(uint8_t on_off)
 {
   if(on_off > 0 ){
-  tm1629a_buffer_update(LED_T_ICON_POS,LED_T_ICON_BITS,LED_T_ICON_BITS); 
+  tm1629a_buffer_update(LED_T_ICON1_POS,LED_T_ICON1_BITS,LED_T_ICON1_BITS); 
+  tm1629a_buffer_update(LED_T_ICON2_POS,LED_T_ICON2_BITS,LED_T_ICON2_BITS); 
  }else{
-  tm1629a_buffer_update(LED_T_ICON_POS,0,LED_T_ICON_BITS); 
+  tm1629a_buffer_update(LED_T_ICON1_POS,0,LED_T_ICON1_BITS); 
+  tm1629a_buffer_update(LED_T_ICON2_POS,0,LED_T_ICON2_BITS); 
  }
 }
 
@@ -158,8 +164,8 @@ if(t == LED_NULL_VALUE){
  t*=-1;
  dis[1]=hex_code[t];
 }else{
-dis[0]=hex_code[t/10];
-dis[1]=hex_code[t%10];
+ dis[0]=hex_code[t/10];
+ dis[1]=hex_code[t%10];
 }
 
 tm1629a_buffer_update(LED_T_HI_POS,dis[0],LED_ABCDEFG_BITS);
@@ -170,11 +176,9 @@ tm1629a_buffer_update(LED_T_LO_POS,dis[1],LED_ABCDEFG_BITS);
 void led_display_pressure_unit(uint8_t on_off)
 {
   if(on_off > 0 ){
-  tm1629a_buffer_update(LED_P_UNIT_L_POS,LED_P_UNIT_L_BITS,LED_P_UNIT_L_BITS); 
-  tm1629a_buffer_update(LED_P_UNIT_R_POS,LED_P_UNIT_R_BITS,LED_P_UNIT_R_BITS); 
+  tm1629a_buffer_update(LED_P_UNIT_POS,LED_P_UNIT_BITS,LED_P_UNIT_BITS); 
  }else{
-  tm1629a_buffer_update(LED_P_UNIT_L_POS,0,LED_P_UNIT_L_BITS); 
-  tm1629a_buffer_update(LED_P_UNIT_R_POS,0,LED_P_UNIT_R_BITS); 
+  tm1629a_buffer_update(LED_P_UNIT_POS,0,LED_P_UNIT_BITS); 
  }
 }
 /*压力图标*/
@@ -206,8 +210,8 @@ if(p == LED_NULL_VALUE){
  dis[0]=null_code;
  dis[1]=null_code;  
 }else {
-dis[0]=hex_code[p/10];
-dis[1]=hex_code[p%10];
+ dis[0]=hex_code[p/10];
+ dis[1]=hex_code[p%10];
 }
 tm1629a_buffer_update(LED_P_HI_POS,dis[0],LED_ABCDEFG_BITS);
 tm1629a_buffer_update(LED_P_LO_POS,dis[1],LED_ABCDEFG_BITS);
@@ -218,48 +222,63 @@ tm1629a_buffer_update(LED_P_LO_POS,dis[1],LED_ABCDEFG_BITS);
 void led_display_capacity_icon_frame(uint8_t on_off)
 {
  if(on_off > 0 ){
-  tm1629a_buffer_update(LED_C_ICON_FRAME_1_POS,LED_C_ICON_FRAME_1_BITS,LED_C_ICON_FRAME_1_BITS); 
-  tm1629a_buffer_update(LED_C_ICON_FRAME_2_POS,LED_C_ICON_FRAME_2_BITS,LED_C_ICON_FRAME_2_BITS); 
+  tm1629a_buffer_update(LED_C_ICON_FRAME1_POS,LED_C_ICON_FRAME1_BITS,LED_C_ICON_FRAME1_BITS); 
+  tm1629a_buffer_update(LED_C_ICON_FRAME2_POS,LED_C_ICON_FRAME2_BITS,LED_C_ICON_FRAME2_BITS); 
  }else{
-  tm1629a_buffer_update(LED_C_ICON_FRAME_1_POS,0,LED_C_ICON_FRAME_1_BITS); 
-  tm1629a_buffer_update(LED_C_ICON_FRAME_2_POS,0,LED_C_ICON_FRAME_2_BITS); 
+  tm1629a_buffer_update(LED_C_ICON_FRAME1_POS,0,LED_C_ICON_FRAME1_BITS); 
+  tm1629a_buffer_update(LED_C_ICON_FRAME2_POS,0,LED_C_ICON_FRAME2_BITS); 
  }
   
 }
 /*容积图标等级1-5*/
 void led_display_capacity_icon_level(uint8_t level)
 {
- uint8_t bits12,bits35;
+ uint8_t bit5,bit4l,bit4r,bits31;
 
  switch(level)
  {
  case 0:
-   bits12=0;
-   bits35=0;
+   bit5=0;
+   bit4l=0;
+   bit4r=0;
+   bits31=0;
    break;
  case 1:
-   bits12=LED_C_ICON_LEVEL_1_BITS;
-   bits35=0;
+   bit5=0;
+   bit4l=0;
+   bit4r=0;
+   bits31=LED_C_ICON_LEVEL1_BITS;
    break;
  case 2:
-   bits12=LED_C_ICON_LEVEL_2_BITS|LED_C_ICON_LEVEL_1_BITS;
-   bits35=0;
+   bit5=0;
+   bit4l=0;
+   bit4r=0;
+   bits31=LED_C_ICON_LEVEL1_BITS|LED_C_ICON_LEVEL2_BITS;
    break;
  case 3:
-   bits12=LED_C_ICON_LEVEL_2_BITS|LED_C_ICON_LEVEL_1_BITS;
-   bits35=LED_C_ICON_LEVEL_3_BITS;
+   bit5=0;
+   bit4l=0;
+   bit4r=0;
+   bits31=LED_C_ICON_LEVEL1_BITS|LED_C_ICON_LEVEL2_BITS|LED_C_ICON_LEVEL3_BITS;
  case 4:
-   bits12=LED_C_ICON_LEVEL_2_BITS|LED_C_ICON_LEVEL_1_BITS;
-   bits35=LED_C_ICON_LEVEL_4_BITS|LED_C_ICON_LEVEL_3_BITS;
+   bit5=0;
+   bit4l=LED_C_ICON_LEVEL4L_BITS;
+   bit4r=LED_C_ICON_LEVEL4R_BITS;
+   bits31=LED_C_ICON_LEVEL1_BITS|LED_C_ICON_LEVEL2_BITS|LED_C_ICON_LEVEL3_BITS;
    break;
  case 5:
-   bits12=LED_C_ICON_LEVEL_2_BITS|LED_C_ICON_LEVEL_1_BITS;
-   bits35=LED_C_ICON_LEVEL_5_BITS|LED_C_ICON_LEVEL_4_BITS|LED_C_ICON_LEVEL_3_BITS;;
+   bit5=LED_C_ICON_LEVEL5_BITS;
+   bit4l=LED_C_ICON_LEVEL4L_BITS;
+   bit4r=LED_C_ICON_LEVEL4R_BITS;
+   bits31=LED_C_ICON_LEVEL1_BITS|LED_C_ICON_LEVEL2_BITS|LED_C_ICON_LEVEL3_BITS;
  default:
    break;
  }
-  tm1629a_buffer_update(LED_C_ICON_LEVEL_1_2_POS,bits12,LED_C_ICON_LEVEL_1_BITS|LED_C_ICON_LEVEL_2_BITS); 
-  tm1629a_buffer_update(LED_C_ICON_LEVEL_3_5_POS,bits35,LED_C_ICON_LEVEL_3_BITS|LED_C_ICON_LEVEL_4_BITS|LED_C_ICON_LEVEL_5_BITS); 
+  
+  tm1629a_buffer_update(LED_C_ICON_LEVEL5_POS,bit5,LED_C_ICON_LEVEL5_BITS); 
+  tm1629a_buffer_update(LED_C_ICON_LEVEL4L_POS,bit4l,LED_C_ICON_LEVEL4L_BITS); 
+  tm1629a_buffer_update(LED_C_ICON_LEVEL4R_POS,bit4r,LED_C_ICON_LEVEL4L_BITS); 
+  tm1629a_buffer_update(LED_C_ICON_LEVEL3_1POS,bits31,LED_C_ICON_LEVEL3_BITS|LED_C_ICON_LEVEL2_BITS|LED_C_ICON_LEVEL1_BITS); 
 }
 /*容积单位*/
 void led_display_capacity_unit(uint8_t on_off)
@@ -300,15 +319,15 @@ void led_display_wifi_icon(uint8_t on_off)
 void led_display_circle_icon(uint8_t on_off_up,uint8_t on_off_dwn)
 {
   if(on_off_up > 0 ){
-  tm1629a_buffer_update(LED_CIRCLE_ICON_POS,LED_CIRCLE_ICON_UP_BITS,LED_CIRCLE_ICON_UP_BITS); 
+  tm1629a_buffer_update(LED_CIRCLE_ICON_POS,LED_CIRCLE_ICON_BITS,LED_CIRCLE_ICON_BITS); 
  }else{
-  tm1629a_buffer_update(LED_CIRCLE_ICON_POS,0,LED_CIRCLE_ICON_UP_BITS); 
+  tm1629a_buffer_update(LED_CIRCLE_ICON_POS,0,LED_CIRCLE_ICON_BITS); 
  }
  
  if(on_off_dwn > 0 ){
-  tm1629a_buffer_update(LED_CIRCLE_ICON_POS,LED_CIRCLE_ICON_DWN_BITS,LED_CIRCLE_ICON_DWN_BITS); 
+  tm1629a_buffer_update(LED_CIRCLE_ICON_POS,LED_CIRCLE_ICON_BITS,LED_CIRCLE_ICON_BITS); 
  }else{
-  tm1629a_buffer_update(LED_CIRCLE_ICON_POS,0,LED_CIRCLE_ICON_DWN_BITS); 
+  tm1629a_buffer_update(LED_CIRCLE_ICON_POS,0,LED_CIRCLE_ICON_BITS); 
  }
  
 }
@@ -316,10 +335,12 @@ void led_display_circle_icon(uint8_t on_off_up,uint8_t on_off_dwn)
 /*商标图标*/
 void led_display_brand_icon(uint8_t on_off)
 {
-  if(on_off > 0 ){
-  tm1629a_buffer_update(LED_BRAND_ICON_POS,LED_BRAND_ICON_BITS,LED_BRAND_ICON_BITS); 
+ if(on_off > 0 ){
+  tm1629a_buffer_update(LED_BRAND_ICON1_POS,LED_BRAND_ICON1_BITS,LED_BRAND_ICON1_BITS); 
+  tm1629a_buffer_update(LED_BRAND_ICON2_POS,LED_BRAND_ICON2_BITS,LED_BRAND_ICON2_BITS); 
  }else{
-  tm1629a_buffer_update(LED_BRAND_ICON_POS,0,LED_BRAND_ICON_BITS); 
+  tm1629a_buffer_update(LED_BRAND_ICON1_POS,0,LED_BRAND_ICON1_BITS); 
+  tm1629a_buffer_update(LED_BRAND_ICON2_POS,0,LED_BRAND_ICON2_BITS); 
  }
 }
 
