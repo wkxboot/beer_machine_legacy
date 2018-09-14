@@ -117,7 +117,8 @@ int16_t get_t(uint16_t adc)
   }else if(idx == TR_MAP_IDX_OVER_LOW_ERR){
   return TEMPERATURE_ERR_VALUE_OVER_LOW;
   }
-  return t_r_map[idx][0];
+  /*返回带有温度补偿值的温度*/
+  return t_r_map[idx][0] + TEMPERATURE_COMPENSATION_VALUE;
 }
 
 void temperature_task(void const *argument)

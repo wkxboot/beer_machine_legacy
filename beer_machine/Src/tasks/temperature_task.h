@@ -33,6 +33,7 @@ void temperature_task(void const *argument);
 
 #define  TR_MAP_IDX_MIN                            2  /*显示最小值t_r_map[2 ][1] r=10920 -10摄氏度*/ 
 #define  TR_MAP_IDX_MAX                            61 /*显示最大值t_r_map[61][1] r=752   49摄氏度*/ 
+#define  TEMPERATURE_COMPENSATION_VALUE            -2 /*温度补偿值,因为温度传感器位置温度与桶内实际温度有误差*/
 
 #define  TEMPERATURE_ERR_VALUE_OVER_HIGH           (0xe * 10 + 0)/*温度显示过高错误代码   e0*/
 #define  TEMPERATURE_ERR_VALUE_OVER_LOW            (0xe * 10 + 1)/*温度显示过低错误代码   e1*/

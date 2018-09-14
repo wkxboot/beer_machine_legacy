@@ -20,8 +20,8 @@ void compressor_task(void const *argument);
 
 
 
-#define  COMPRESSOR_WORK_TEMPERATURE           5 /*开压缩机温度单位:摄氏度*/
-#define  COMPRESSOR_STOP_TEMPERATURE           1 /*关压缩机温度单位:摄氏度*/
+#define  COMPRESSOR_WORK_TEMPERATURE           4 /*开压缩机温度单位:摄氏度*/
+#define  COMPRESSOR_STOP_TEMPERATURE           2 /*关压缩机温度单位:摄氏度*/
 
 #define  COMPRESSOR_TASK_WORK_TIMEOUT          (120*60*1000) /*连续工作时间单位:ms*/
 #define  COMPRESSOR_TASK_REST_TIMEOUT          (10*60*1000)  /*连续工作时间后的休息时间单位:ms*/
