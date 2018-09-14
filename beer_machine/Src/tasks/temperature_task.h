@@ -25,14 +25,14 @@ void temperature_task(void const *argument);
 #define  TEMPERATURE_SENSOR_ADC_VALUE_MAX          4095/*温度AD转换最大数值*/      
 #define  TEMPERATURE_SENSOR_BYPASS_RES_VALUE       2000/*温度AD转换旁路电阻值*/  
 #define  TEMPERATURE_SENSOR_REFERENCE_VOLTAGE      3.3 /*温度传感器参考电压 单位:V*/
-#define  TEMPERATURE_SENSOR_SUPPLY_VOLTAGE         5.0 /*温度传感器供电电压 单位:V*/
+#define  TEMPERATURE_SENSOR_SUPPLY_VOLTAGE         3.3 /*温度传感器供电电压 单位:V*/
 
 
 #define  TEMPERATURE_TASK_MSG_WAIT_TIMEOUT         osWaitForever
 #define  TEMPERATURE_TASK_PUT_MSG_TIMEOUT          5  /*发送消息超时时间*/
 
 #define  TR_MAP_IDX_MIN                            2  /*显示最小值t_r_map[2 ][1] r=10920 -10摄氏度*/ 
-#define  TR_MAP_IDX_MAX                            51 /*显示最大值t_r_map[51][1] r=1115   39摄氏度*/ 
+#define  TR_MAP_IDX_MAX                            61 /*显示最大值t_r_map[61][1] r=752   49摄氏度*/ 
 
 #define  TEMPERATURE_ERR_VALUE_OVER_HIGH           (0xe * 10 + 0)/*温度显示过高错误代码   e0*/
 #define  TEMPERATURE_ERR_VALUE_OVER_LOW            (0xe * 10 + 1)/*温度显示过低错误代码   e1*/
