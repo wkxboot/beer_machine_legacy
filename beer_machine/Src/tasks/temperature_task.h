@@ -31,8 +31,8 @@ void temperature_task(void const *argument);
 #define  TEMPERATURE_TASK_MSG_WAIT_TIMEOUT         osWaitForever
 #define  TEMPERATURE_TASK_PUT_MSG_TIMEOUT          5  /*发送消息超时时间*/
 
-#define  TR_MAP_IDX_MIN                            2  /*显示最小值t_r_map[2 ][1] r=10920 -10摄氏度*/ 
-#define  TR_MAP_IDX_MAX                            51 /*显示最大值t_r_map[51][1] r=1115   39摄氏度*/ 
+#define  TR_MAP_IDX_MIN                            5  /*显示最小值t_r_map[5 ][1] r=9316 -7摄氏度*/ 
+#define  TR_MAP_IDX_MAX                            52 /*显示最大值t_r_map[52][1] r=1071   40摄氏度*/ 
 
 #define  TEMPERATURE_ERR_VALUE_OVER_HIGH           (0xe * 10 + 0)/*温度显示过高错误代码   e0*/
 #define  TEMPERATURE_ERR_VALUE_OVER_LOW            (0xe * 10 + 1)/*温度显示过低错误代码   e1*/
