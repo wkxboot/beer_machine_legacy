@@ -26,7 +26,7 @@ void pressure_task(void const *argument);
 
 
 #define  PRESSURE_SENSOR_REFERENCE_VOLTAGE         3.3   /*压力传感器参考电压电压 单位:V*/
-#define  PRESSURE_SENSOR_OUTPUT_VOLTAGE_MIN        0.485 /*压力传感器最小输出电压 单位:V*/
+#define  PRESSURE_SENSOR_OUTPUT_VOLTAGE_MIN        0.50  /*压力传感器最小输出电压 单位:V*/
 #define  PRESSURE_SENSOR_OUTPUT_VOLTAGE_MAX        4.5   /*压力传感器最大输出电压 单位:V*/
 
 #define  PRESSURE_SENSOR_INPUT_PA_MIN             (0)/*压力传感器最小输入压力 单位:Pa*/

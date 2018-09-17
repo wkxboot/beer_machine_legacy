@@ -26,7 +26,7 @@ void temperature_task(void const *argument);
 #define  TEMPERATURE_SENSOR_BYPASS_RES_VALUE       2000/*温度AD转换旁路电阻值*/  
 #define  TEMPERATURE_SENSOR_REFERENCE_VOLTAGE      3.3 /*温度传感器参考电压 单位:V*/
 #define  TEMPERATURE_SENSOR_SUPPLY_VOLTAGE         5.0 /*温度传感器供电电压 单位:V*/
-
+#define  TEMPERATURE_SENSOR_COMPENSATION_VALUE     -2  /*温度传感器位置与桶内温度有温差*/
 
 #define  TEMPERATURE_TASK_MSG_WAIT_TIMEOUT         osWaitForever
 #define  TEMPERATURE_TASK_PUT_MSG_TIMEOUT          5  /*发送消息超时时间*/
