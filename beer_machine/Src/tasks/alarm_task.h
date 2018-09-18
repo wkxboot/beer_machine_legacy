@@ -33,7 +33,7 @@ ALARM_TASK_BEGIN
 
 
 
-#define  ALARM_TASK_PRESSURE_ALARM_VALUE                11 /*蜂鸣器高压报警放大10倍  单位:kg/cm2*/
+#define  ALARM_TASK_PRESSURE_ALARM_VALUE                50 /*蜂鸣器高压报警放大10倍  单位:kg/cm2 5.0kg/cm2*/
 
 
 

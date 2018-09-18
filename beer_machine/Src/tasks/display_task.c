@@ -164,11 +164,13 @@ void display_task(void const *argument)
       display.pressure.dis_value = ptr_msg->pressure;
       if(display.pressure.dis_value == PRESSURE_ERR_VALUE_OVER_HIGH ||\
          display.pressure.dis_value == PRESSURE_ERR_VALUE_OVER_LOW  ||\
-         display.pressure.dis_value == PRESSURE_ERR_VALUE_SENSOR    ||\
-         display.pressure.dis_value >= ALARM_TASK_PRESSURE_ALARM_VALUE){          
+         display.pressure.dis_value == PRESSURE_ERR_VALUE_SENSOR){          
      display.pressure.is_flash = TRUE;
      led_display_pressure_point(LED_DISPLAY_OFF);
-    }else{
+     }else if(display.pressure.dis_value >= ALARM_TASK_PRESSURE_ALARM_VALUE){
+     display.pressure.is_flash = TRUE;
+     led_display_pressure_point(LED_DISPLAY_ON);
+     }else{
      display.pressure.is_flash = FALSE;
      led_display_pressure_point(LED_DISPLAY_ON);
      led_display_pressure(display.pressure.dis_value);
