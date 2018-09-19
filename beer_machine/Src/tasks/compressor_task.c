@@ -176,9 +176,13 @@ static void compressor_rest_timer_expired(void const *argument)
 
 static void compressor_pwr_turn_on()
 {
+ osStatus status;
  bsp_compressor_ctrl_on(); 
  d_msg.type = COMPRESSOR_START;
- osMessagePut(display_task_msg_q_id,(uint32_t)&d_msg,COMPRESSOR_TASK_PUT_MSG_TIMEOUT);
+ status = osMessagePut(display_task_msg_q_id,(uint32_t)&d_msg,COMPRESSOR_TASK_PUT_MSG_TIMEOUT);
+ if(status !=osOK){
+  log_error("put error compressor start msg error:%d\r\n",status);
+ } 
 }
 static void compressor_pwr_turn_off_pre()
 {
@@ -187,9 +191,13 @@ static void compressor_pwr_turn_off_pre()
 
 static void compressor_pwr_turn_off()
 {
+ osStatus status;
  bsp_compressor_ctrl_off();  
  d_msg.type = COMPRESSOR_STOP;
- osMessagePut(display_task_msg_q_id,(uint32_t)&d_msg,COMPRESSOR_TASK_PUT_MSG_TIMEOUT);
+ status = osMessagePut(display_task_msg_q_id,(uint32_t)&d_msg,COMPRESSOR_TASK_PUT_MSG_TIMEOUT);
+ if(status !=osOK){
+  log_error("put error compressor stop msg error:%d\r\n",status);
+ } 
 }
 
 /*需要请求当前温度值，以判断是否需要控制压缩机*/

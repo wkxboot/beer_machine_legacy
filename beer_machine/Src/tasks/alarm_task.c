@@ -148,6 +148,7 @@ static void alarm_switch_timer_start(void)
 
 static void alarm_switch_timer_expired(void const * argument)
 {
+   osStatus status;
  /*按键状态监视处理*/ 
   if( bsp_is_alarm_sw_press()){
     if(ptr_alarm->sw.status !=SW_STATUS_PRESS){
@@ -159,7 +160,10 @@ static void alarm_switch_timer_expired(void const * argument)
        ptr_alarm->sw.press_time < ALARM_TASK_SW_LONG_PRESS_TIMEOUT+ALARM_TASK_SWITCH_MONITOR_TIMEOUT){
     log_debug("确认一次长按键.\r\n");
     asw_msg.type = ALARM_SW_LONG_PRESS;
-    osMessagePut(alarm_task_msg_q_id,(uint32_t)&asw_msg,0); 
+    status = osMessagePut(alarm_task_msg_q_id,(uint32_t)&asw_msg,0);
+    if(status !=osOK){
+    log_error("put err long sw msg error:%d\r\n",status);
+    } 
     }
     }
   }else if(ptr_alarm->sw.status !=SW_STATUS_RELEASE){
@@ -168,7 +172,10 @@ static void alarm_switch_timer_expired(void const * argument)
    if(ptr_alarm->sw.press_time >= ALARM_TASK_SW_SHORT_PRESS_TIMEOUT && ptr_alarm->sw.press_time < ALARM_TASK_SW_LONG_PRESS_TIMEOUT){
     log_debug("确认一次短按键.\r\n");
     asw_msg.type = ALARM_SW_SHORT_PRESS;
-    osMessagePut(alarm_task_msg_q_id,(uint32_t)&asw_msg,0);  
+    status = osMessagePut(alarm_task_msg_q_id,(uint32_t)&asw_msg,0);
+    if(status !=osOK){
+    log_error("put err short sw msg error:%d\r\n",status);
+    } 
     }
   }
 }

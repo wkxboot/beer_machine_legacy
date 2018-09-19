@@ -71,7 +71,7 @@ void pressure_task(void const *argument)
   uint32_t cur_time;
   uint32_t delta_time;
   osEvent os_msg;
-  
+  osStatus status;
   osMessageQDef(pressure_msg_q,6,uint32_t);
   pressure_task_msg_q_id = osMessageCreate(osMessageQ(pressure_msg_q),pressure_task_hdl);
   log_assert(pressure_task_msg_q_id);
@@ -116,11 +116,17 @@ void pressure_task(void const *argument)
    pressure.changed=FALSE;
    d_msg.type = BROADCAST_PRESSURE_VALUE;
    d_msg.pressure =  pressure.value;
-   osMessagePut(display_task_msg_q_id,(uint32_t)&d_msg,PRESSURE_TASK_PUT_MSG_TIMEOUT);  
+   status = osMessagePut(display_task_msg_q_id,(uint32_t)&d_msg,PRESSURE_TASK_PUT_MSG_TIMEOUT);  
+   if(status !=osOK){
+   log_error("put display msg error:%d\r\n",status); 
+   }
    
    a_msg.type = BROADCAST_PRESSURE_VALUE;
    a_msg.pressure =  pressure.value;
-   osMessagePut(alarm_task_msg_q_id,(uint32_t)&a_msg,PRESSURE_TASK_PUT_MSG_TIMEOUT);  
+   status = osMessagePut(alarm_task_msg_q_id,(uint32_t)&a_msg,PRESSURE_TASK_PUT_MSG_TIMEOUT); 
+   if(status !=osOK){
+   log_error("put broadcast p msg error:%d\r\n",status); 
+   }
    }  
   }
   
@@ -128,7 +134,10 @@ void pressure_task(void const *argument)
   if(ptr_msg->type == REQ_PRESSURE_VALUE){
     response_msg.type = RESPONSE_PRESSURE_VALUE;
     response_msg.pressure =  pressure.value;
-    osMessagePut(ptr_msg->req_q_id,(uint32_t)&response_msg,PRESSURE_TASK_PUT_MSG_TIMEOUT);  
+    status = osMessagePut(ptr_msg->req_q_id,(uint32_t)&response_msg,PRESSURE_TASK_PUT_MSG_TIMEOUT);  
+    if(status !=osOK){
+    log_error("put response p msg error:%d\r\n",status); 
+    }
   }
   
   

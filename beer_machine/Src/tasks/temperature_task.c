@@ -26,7 +26,7 @@ static int16_t const t_r_map[][2]={
   {18,2730}  ,{19,2609}  ,{20,2494}  ,{21,2384} ,{22,2280},{23,2181},{24,2087},{25,1997},{26,1912},{27,1831} ,
   {28,1754}  ,{29,1680}  ,{30,1610}  ,{31,1543} ,{32,1480},{33,1419},{34,1361},{35,1306},{36,1254},{37,1204} ,
   {38,1156}  ,{39,1110}  ,{40,1067}  ,{41,1025} ,{42,985} ,{43,947} ,{44,911} ,{45,876} ,{46,843} ,{47,811}  ,
-  {48,781}   ,{49,752}   ,{50,724}
+  {48,781}   ,{49,752}   ,{50,724}   ,{51,697}  ,{52,672} ,{53,647} ,{54,624} ,{55,602} ,{56,580} ,{57,559}
 };
 
 
@@ -80,13 +80,13 @@ static uint8_t seek_idex(uint32_t r)
     if(r <= t_r_map[mid-1][1]){
     return mid - 1;
     } else{
-    high = mid ;  
+    high = mid - 1;  
     }
   } else {
   if(r > t_r_map[mid+1][1]){
    return mid;
   } else{
-  low = mid;   
+  low = mid + 1;   
   }
   }  
  }
@@ -128,7 +128,7 @@ void temperature_task(void const *argument)
   uint32_t delta_time;
   int16_t  t;
   osEvent  os_msg;
-  
+  osStatus status;
   osMessageQDef(temperature_msg_q,6,uint32_t);
   temperature_task_msg_q_id = osMessageCreate(osMessageQ(temperature_msg_q),temperature_task_hdl);
   log_assert(temperature_task_msg_q_id);
@@ -175,22 +175,34 @@ void temperature_task(void const *argument)
    
    a_msg.type = BROADCAST_TEMPERATURE_VALUE;
    a_msg.temperature= temperature.value;
-   osMessagePut(alarm_task_msg_q_id,(uint32_t)&a_msg,TEMPERATURE_TASK_PUT_MSG_TIMEOUT);
+   status = osMessagePut(alarm_task_msg_q_id,(uint32_t)&a_msg,TEMPERATURE_TASK_PUT_MSG_TIMEOUT);
+   if(status !=osOK){
+   log_error("put alarm broadcast t msg error:%d\r\n",status); 
+   }
    
    c_msg.type = BROADCAST_TEMPERATURE_VALUE;
    c_msg.temperature= temperature.value;
-   osMessagePut(compressor_task_msg_q_id,(uint32_t)&c_msg,TEMPERATURE_TASK_PUT_MSG_TIMEOUT);
+   status = osMessagePut(compressor_task_msg_q_id,(uint32_t)&c_msg,TEMPERATURE_TASK_PUT_MSG_TIMEOUT);
+   if(status !=osOK){
+   log_error("put compressor broadcast t msg error:%d\r\n",status); 
+   }
    
    d_msg.type = BROADCAST_TEMPERATURE_VALUE;
    d_msg.temperature =  temperature.value;
-   osMessagePut(display_task_msg_q_id,(uint32_t)&d_msg,TEMPERATURE_TASK_PUT_MSG_TIMEOUT);
+   status = osMessagePut(display_task_msg_q_id,(uint32_t)&d_msg,TEMPERATURE_TASK_PUT_MSG_TIMEOUT);
+   if(status !=osOK){
+   log_error("put display broadcast t msg error:%d\r\n",status); 
+   }
    }
   }
   /*主动请求温度消息处理*/
   if(ptr_msg->type == REQ_TEMPERATURE_VALUE){
    response_msg.type = RESPONSE_TEMPERATURE_VALUE;
    response_msg.temperature= temperature.value;
-   osMessagePut(ptr_msg->req_q_id,(uint32_t)&response_msg,TEMPERATURE_TASK_PUT_MSG_TIMEOUT); 
+   status = osMessagePut(ptr_msg->req_q_id,(uint32_t)&response_msg,TEMPERATURE_TASK_PUT_MSG_TIMEOUT);
+   if(status !=osOK){
+   log_error("put response t msg error:%d\r\n",status); 
+   }
   }
  }
  }

@@ -63,6 +63,7 @@
 #include "temperature_task.h"
 #include "pressure_task.h"
 #include "led.h"
+#include "firmware_version.h"
 #include "log.h"
 #define  LOG_MODULE_LEVEL    LOG_LEVEL_DEBUG
 #define  LOG_MODULE_NAME     "[main]"
@@ -165,6 +166,7 @@ void MX_FREERTOS_Init(void) {
   /* USER CODE BEGIN Init */
     log_init();
     tasks_init();    
+    log_debug("version:%s.\r\n",FIRMWARE_VERSION_STR);
   /* USER CODE END Init */
 
   /* USER CODE BEGIN RTOS_MUTEX */

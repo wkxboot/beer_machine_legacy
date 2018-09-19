@@ -88,8 +88,12 @@ static void display_timer_stop(void)
 */
 static void display_timer_expired(void const *argument)
 {
+  osStatus status;
   d_msg.type = DISPLAY_FLASH_TIMER;
-  osMessagePut(display_task_msg_q_id,(uint32_t)&d_msg,DISPLAY_TASK_PUT_MSG_TIMEOUT);
+  status = osMessagePut(display_task_msg_q_id,(uint32_t)&d_msg,DISPLAY_TASK_PUT_MSG_TIMEOUT);
+  if(status !=osOK){
+  log_error("put flash msg error:%d\r\n",status); 
+  }
 }
 
  
@@ -164,10 +168,12 @@ void display_task(void const *argument)
       display.pressure.dis_value = ptr_msg->pressure;
       if(display.pressure.dis_value == PRESSURE_ERR_VALUE_OVER_HIGH ||\
          display.pressure.dis_value == PRESSURE_ERR_VALUE_OVER_LOW  ||\
-         display.pressure.dis_value == PRESSURE_ERR_VALUE_SENSOR    ||\
-         display.pressure.dis_value >= ALARM_TASK_PRESSURE_ALARM_VALUE){          
+         display.pressure.dis_value == PRESSURE_ERR_VALUE_SENSOR    ){          
      display.pressure.is_flash = TRUE;
      led_display_pressure_point(LED_DISPLAY_OFF);
+    }else if(display.pressure.dis_value >= ALARM_TASK_PRESSURE_ALARM_VALUE){
+     display.pressure.is_flash = TRUE;
+     led_display_pressure_point(LED_DISPLAY_ON);
     }else{
      display.pressure.is_flash = FALSE;
      led_display_pressure_point(LED_DISPLAY_ON);

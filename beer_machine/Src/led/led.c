@@ -277,7 +277,7 @@ void led_display_capacity_icon_level(uint8_t level)
   
   tm1629a_buffer_update(LED_C_ICON_LEVEL5_POS,bit5,LED_C_ICON_LEVEL5_BITS); 
   tm1629a_buffer_update(LED_C_ICON_LEVEL4L_POS,bit4l,LED_C_ICON_LEVEL4L_BITS); 
-  tm1629a_buffer_update(LED_C_ICON_LEVEL4R_POS,bit4r,LED_C_ICON_LEVEL4L_BITS); 
+  tm1629a_buffer_update(LED_C_ICON_LEVEL4R_POS,bit4r,LED_C_ICON_LEVEL4R_BITS); 
   tm1629a_buffer_update(LED_C_ICON_LEVEL3_1POS,bits31,LED_C_ICON_LEVEL3_BITS|LED_C_ICON_LEVEL2_BITS|LED_C_ICON_LEVEL1_BITS); 
 }
 /*容积单位*/
