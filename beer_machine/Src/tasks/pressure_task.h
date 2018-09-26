@@ -18,8 +18,8 @@ extern osThreadId   pressure_task_hdl;
 extern osMessageQId pressure_task_msg_q_id;
 void pressure_task(void const *argument);
 
-
-#define  PRESSURE_VALUE_IN_KG_CM2_MAX              99  /*最大显示压力。放大10倍 9.9kg/cm2*/
+#define  PRESSURE_VALUE_IN_KG_CM2_ERR_MAX          70  /*最大错误压力。放大10倍 7.0kg/cm2*/
+#define  PRESSURE_VALUE_IN_KG_CM2_MAX              65  /*最大显示压力。放大10倍 6.5kg/cm2*/
 #define  PRESSURE_VALUE_IN_KG_CM2_MIN              -2  /*最小显示压力。放大10倍 -0.2kg/cm2*/
  
 #define  PA_VALUE_PER_1KG_CM2                      98066.5 /*单位换算 1kg/cm2 == 98066.5Pa */

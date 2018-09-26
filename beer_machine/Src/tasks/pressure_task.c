@@ -56,6 +56,8 @@ static uint8_t get_pressure(uint16_t adc)
  }else if(p < PRESSURE_VALUE_IN_KG_CM2_MIN ){
  log_error("pressure over low.\r\n");
  return  PRESSURE_ERR_VALUE_OVER_LOW;
+ }else if(p > PRESSURE_VALUE_IN_KG_CM2_ERR_MAX){
+ return PRESSURE_ERR_VALUE_SENSOR;
  }else if(p > PRESSURE_VALUE_IN_KG_CM2_MAX){
  log_error("pressure over high.\r\n");
  return  PRESSURE_ERR_VALUE_OVER_HIGH;
