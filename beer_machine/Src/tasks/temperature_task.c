@@ -66,10 +66,10 @@ static uint8_t seek_idex(uint32_t r)
  int low = TR_MAP_IDX_MIN;  
  int high =TR_MAP_IDX_MAX;  
  
- if(r < t_r_map[TR_MAP_IDX_MAX][1]){
+ if(r <= t_r_map[TR_MAP_IDX_MAX][1]){
  log_error("NTC 阻值超过最高温度范围！r=%d\r\n",r); 
  return TR_MAP_IDX_OVER_HIGH_ERR;
- }else if(r > t_r_map[TR_MAP_IDX_MIN][1]){
+ }else if(r >= t_r_map[TR_MAP_IDX_MIN][1]){
  log_error("NTC 阻值超过最低温度范围！r=%d\r\n",r); 
  return TR_MAP_IDX_OVER_LOW_ERR;
  }

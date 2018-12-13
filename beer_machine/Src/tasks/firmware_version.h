@@ -3,7 +3,7 @@
 
 
 
-#define   FIRMWARE_VERSION_STR          "1.0.1.101"
+#define   FIRMWARE_VERSION_STR          "1.0.1.102"
 
 
 
