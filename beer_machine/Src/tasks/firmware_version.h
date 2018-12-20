@@ -3,7 +3,8 @@
 
 
 
-#define   FIRMWARE_VERSION_STR          "1.0.1.102"
+/*温度是实际温度 压缩机控制温度上下限(>=5 <=2) 更新压缩机工作逻辑*/
+#define   FIRMWARE_VERSION_STR          "1.0.1.105"  
 
 
 

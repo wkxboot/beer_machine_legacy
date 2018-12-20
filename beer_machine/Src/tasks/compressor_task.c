@@ -22,10 +22,12 @@ static task_msg_t  *ptr_msg;
 
 typedef enum
 {
-COMPRESSOR_STATUS_RDY=0, /*就绪状态*/
-COMPRESSOR_STATUS_REST,  /*长时间工作后停机的状态*/
-COMPRESSOR_STATUS_WORK,  /*压缩机工作状态*/
-COMPRESSOR_STATUS_WAIT   /*两次开机之间的状态*/
+COMPRESSOR_STATUS_RDY=0,        /*正常关机就绪状态*/
+COMPRESSOR_STATUS_RDY_CONTINUE, /*长时间工作休息完后的就绪状态*/
+COMPRESSOR_STATUS_REST,         /*长时间工作后停机的状态*/
+COMPRESSOR_STATUS_WORK,         /*压缩机工作状态*/
+COMPRESSOR_STATUS_WAIT,         /*两次开机之间的状态*/
+COMPRESSOR_STATUS_WAIT_CONTINUE /*异常时两次开机之间的状态*/
 }compressor_status_t;
 
 
@@ -49,8 +51,9 @@ static void compressor_rest_timer_start(void);
 static void compressor_work_timer_stop(void);
 /*
 static void compressor_wait_timer_stop(void);
-static void compressor_rest_timer_stop(void);
 */
+static void compressor_rest_timer_stop(void);
+
 
 static void compressor_work_timer_expired(void const *argument);
 static void compressor_wait_timer_expired(void const *argument);
@@ -125,10 +128,15 @@ static void compressor_wait_timer_expired(void const *argument)
   /*首先避免竟态，获取mutex*/
   osMutexWait(compressor.mutex,COMPRESSOR_TASK_MUTEX_WAIT_TIMEOUT);
   
-  if(compressor.status == COMPRESSOR_STATUS_WAIT){
+  if(compressor.status == COMPRESSOR_STATUS_WAIT || \
+     compressor.status == COMPRESSOR_STATUS_WAIT_CONTINUE){
   /*需要请求当前温度值，以判断是否需要控制压缩机*/
    log_debug("压缩机间隔等待完毕.请求温度.\r\n");
+   if(compressor.status == COMPRESSOR_STATUS_WAIT){
    compressor.status = COMPRESSOR_STATUS_RDY;
+   }else{
+   compressor.status = COMPRESSOR_STATUS_RDY_CONTINUE;   
+   }
    compressor_task_req_temperature();
   }    
  /*释放mutex*/ 
@@ -164,7 +172,7 @@ static void compressor_rest_timer_expired(void const *argument)
    if(compressor.status == COMPRESSOR_STATUS_REST){
    /*需要请求当前温度值，以判断是否需要控制压缩机*/
    log_debug("压缩机休息完毕.请求温度.\r\n");
-   compressor.status = COMPRESSOR_STATUS_RDY;
+   compressor.status = COMPRESSOR_STATUS_RDY_CONTINUE;
    compressor_task_req_temperature();
   } 
   
@@ -258,24 +266,25 @@ void compressor_task(void const *argument)
    /*温度消息处理*/
   if(ptr_msg->type == RESPONSE_TEMPERATURE_VALUE ||ptr_msg->type == BROADCAST_TEMPERATURE_VALUE){ 
   t=ptr_msg->temperature;   
-  if(t == TEMPERATURE_ERR_VALUE_SENSOR    ||\
-     t == TEMPERATURE_ERR_VALUE_OVER_HIGH ||\
+  if(t == TEMPERATURE_ERR_VALUE_SENSOR    || \
+     t == TEMPERATURE_ERR_VALUE_OVER_HIGH || \
      t == TEMPERATURE_ERR_VALUE_OVER_LOW){ 
       log_error("温度错误.准备关压缩机.code:%d\r\n",t);
       if(compressor.status == COMPRESSOR_STATUS_WORK){
       compressor_work_timer_stop();
-      compressor.status = COMPRESSOR_STATUS_WAIT;
+      compressor.status = COMPRESSOR_STATUS_WAIT_CONTINUE;
       compressor_pwr_turn_off();
       compressor_wait_timer_start();
-      log_error("关闭压缩机->wait\r\n");
+      log_error("关闭压缩机->wait continue.\r\n");
       }else{
-      log_error("压缩机已是关闭状态.skip.\r\n");
+      log_error("压缩机状态：%d.skip.\r\n",compressor.status);
       }
-   }else if(t >= COMPRESSOR_WORK_TEMPERATURE && compressor.status == COMPRESSOR_STATUS_RDY){
+   }else if((t >= COMPRESSOR_WORK_TEMPERATURE && compressor.status == COMPRESSOR_STATUS_RDY) ||\
+            (t > COMPRESSOR_STOP_TEMPERATURE  && compressor.status == COMPRESSOR_STATUS_RDY_CONTINUE)){
      compressor.status = COMPRESSOR_STATUS_WORK;
      compressor_pwr_turn_on();
      compressor_work_timer_start();
-     log_debug("温度:%d 高于开机温度.开启压缩机.\r\n",t);
+     log_debug("温度:%d 高于开规则机温度.开启压缩机.\r\n",t);
     }else if(t <= COMPRESSOR_STOP_TEMPERATURE && compressor.status == COMPRESSOR_STATUS_WORK){
      compressor_work_timer_stop();
      compressor.status = COMPRESSOR_STATUS_WAIT;
@@ -283,7 +292,7 @@ void compressor_task(void const *argument)
      compressor_wait_timer_start();
      log_debug("温度:%d 低于关机温度.关闭压缩机.\r\n",t);
     }
-    }
+   }
    /*释放mutex*/ 
    osMutexRelease (compressor.mutex);
    }
